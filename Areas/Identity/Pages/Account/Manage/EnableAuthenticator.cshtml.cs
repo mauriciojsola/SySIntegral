@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace WebApplication4.Areas.Identity.Pages.Account.Manage
+namespace SySIntegral.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
@@ -148,7 +148,7 @@ namespace WebApplication4.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("WebApplication4"),
+                _urlEncoder.Encode("SySIntegral"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

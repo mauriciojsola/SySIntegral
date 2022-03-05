@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace WebApplication4
+namespace SySIntegral
 {
     internal class AuthMessageSender : Microsoft.AspNetCore.Identity.UI.Services.IEmailSender
     {
