@@ -1,28 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace SySIntegral.Areas.Identity.Pages.Account
+namespace SySIntegral.Web.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _webHostEnvironment= webHostEnvironment;
         }
 
         [BindProperty]
@@ -58,13 +62,28 @@ namespace SySIntegral.Areas.Identity.Pages.Account
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "SySIntegral - Resetear contraseña", PrepareForgotPasswordEmailBody(callbackUrl));
+                //$"Para resetear su contraseña, por favor siga el siguiente link: <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>RESETEAR CONTRASEÑA</a>."
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
             return Page();
+        }
+
+        private string PrepareForgotPasswordEmailBody(string callbackUrl)
+        {
+            //var path = Server.MapPath("~/Content/EmailTemplates/ForgotPassword.html");
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var contentRootPath = _webHostEnvironment.ContentRootPath;
+            var path = Path.Combine(contentRootPath, @"Content\EmailTemplates\ForgotPassword.html");
+
+            var body = System.IO.File.ReadAllText(path);
+            // replace tokens
+            body = body.Replace("{{COMPANY_NAME}}", "SySIntegral");
+            body = body.Replace("{{RESET_PASSWORD_URL}}", HtmlEncoder.Default.Encode(callbackUrl));
+            body = body.Replace("{{YEAR}}", DateTime.Now.Year.ToString());
+            return body;
         }
     }
 }

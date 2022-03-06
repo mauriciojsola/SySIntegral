@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using SySIntegral.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SySIntegral.Core.Services.Messaging;
+using SySIntegral.Data;
 
-namespace SySIntegral
+namespace SySIntegral.Web
 {
     public class Startup
     {
@@ -45,10 +46,17 @@ namespace SySIntegral
                 options.Password.RequiredLength = 6;
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>()
-                    //.AddDefaultUI()
+                    .AddDefaultUI()
                     .AddDefaultTokenProviders();
 
-            services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, AuthMessageSender>();
+            services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
+
+            //services.Configure<SendGridEmailSenderOptions>(options =>
+            //{
+            //    options.ApiKey = Configuration["ExternalProviders:SendGrid:ApiKey"];
+            //    options.SenderEmail = Configuration["ExternalProviders:SendGrid:SenderEmail"];
+            //    options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
+            //});
 
             services.AddRazorPages();
         }
