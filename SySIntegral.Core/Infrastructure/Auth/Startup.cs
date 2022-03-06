@@ -18,7 +18,8 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 .AddCurrentUser()
                 //.AddPermissions()
                 // Must add identity before adding auth!
-                .AddIdentity();
+                .AddIdentity()
+                .AddUserClaimsPrincipalFactory();
 
             return services;
 
@@ -37,7 +38,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 .AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
 
         internal static IServiceCollection AddIdentity(this IServiceCollection services) =>
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedEmail = false;
                     options.Password.RequireDigit = false;
@@ -49,5 +50,9 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 //.AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .Services;
+
+
+        internal static IServiceCollection AddUserClaimsPrincipalFactory(this IServiceCollection services) =>
+            services.AddScoped<Microsoft.AspNetCore.Identity.IUserClaimsPrincipalFactory<ApplicationUser>, SySClaimsPrincipalFactory>();
     }
 }

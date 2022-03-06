@@ -7,6 +7,8 @@ namespace SySIntegral.Core.Entities.Users
 {
     public class ApplicationUser : IdentityUser
     {
+        public string OrganizationId { get; set; }
+
         [PersonalData]   
         public string FirstName { get; set; }
  

@@ -1,5 +1,6 @@
 ﻿@using SySIntegral.Web.Areas.Identity.Pages.Account.Manage
-@inject SignInManager<IdentityUser> SignInManager
+@using SySIntegral.Core.Entities.Users
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
