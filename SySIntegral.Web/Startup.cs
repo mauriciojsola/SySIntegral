@@ -70,6 +70,13 @@ namespace SySIntegral.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
+                endpoints.MapAreaControllerRoute(
+                    "Admin",
+                    "Admin",
+                    "Admin/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    "default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

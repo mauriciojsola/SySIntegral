@@ -1,0 +1,33 @@
+﻿    @*@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
+    {
+    Layout = (string)parentLayout;
+    }
+    else
+    {
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+    }*@
+
+    @{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Configuración</h2>
+<hr />
+<div>
+
+    <div class="row">
+        <div class="col-md-3">
+            @*@await Html.PartialAsync("_ManageAdminNav.cshtml")*@
+            <partial name="_ManageAdminNav" />
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

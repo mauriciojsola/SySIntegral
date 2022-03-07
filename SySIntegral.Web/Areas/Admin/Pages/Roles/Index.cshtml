@@ -1,0 +1,59 @@
+﻿@page
+@using SySIntegral.Web.Areas.Admin.Pages
+@model SySIntegral.Web.Areas.Admin.Pages.Roles.IndexModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Roles";
+    ViewData["ActivePage"] = AdminNavPages.Roles;
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.Roles.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <tr>
+                            <td> @role.Id  </td>
+                            <td>@role.Name</td>
+                            <td>
+                                <a asp-page="./Edit" asp-route-id="@role.Id">Editar</a> |
+                                <button type="submit" asp-page-handler="delete"
+                                        asp-route-id="@role.Id">
+                                    Borrar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-warning">No se encontraron Roles.</div>
+        }
+
+        <button class="btn btn-primary" asp-page="Create">Crear Nuevo Rol</button>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+

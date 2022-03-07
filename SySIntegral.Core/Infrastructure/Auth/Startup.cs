@@ -46,7 +46,9 @@ namespace SySIntegral.Core.Infrastructure.Auth
                     options.Password.RequireUppercase = false;
                     options.Password.RequireLowercase = false;
                     options.Password.RequiredLength = 6;
-                }).AddEntityFrameworkStores<ApplicationDbContext>()
+                })
+                //.AddRoles<RoleManager<IdentityRole>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 //.AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .Services;

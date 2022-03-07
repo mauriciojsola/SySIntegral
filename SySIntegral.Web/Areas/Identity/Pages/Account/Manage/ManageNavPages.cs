@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SySIntegral.Web.Areas.Identity.Pages.Account.Manage
 {
-    public static class ManageNavPages
+    public static class AdminNavPages
     {
         public static string Index => "Index";
 
