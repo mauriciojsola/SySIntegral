@@ -49,7 +49,7 @@ namespace SySIntegral.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Contraseña?")]
+            [Display(Name = "Contraseña")]
             public string Password { get; set; }
 
             [Display(Name = "Recordar mis datos?")]

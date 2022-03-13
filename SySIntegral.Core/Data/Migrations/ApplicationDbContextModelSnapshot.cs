@@ -150,9 +150,28 @@ namespace SySIntegral.Core.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+
+            modelBuilder.Entity("SySIntegral.Core.Entities.Organizations.Organization", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
+
+                b.Property<string>("Name")
+                    .HasColumnType("nvarchar(100)")
+                    .HasMaxLength(100);
+
+                b.HasKey("Id");
+
+                b.ToTable("Organization");
+            });
+
+
             modelBuilder.Entity("SySIntegral.Core.Entities.Users.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OrganizationId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
@@ -188,10 +207,7 @@ namespace SySIntegral.Core.Data.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
-
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("nvarchar(max)");
-
+                    
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -212,6 +228,12 @@ namespace SySIntegral.Core.Data.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+                    
+                    b.HasOne("SySIntegral.Core.Entities.Organizations.Organization", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");

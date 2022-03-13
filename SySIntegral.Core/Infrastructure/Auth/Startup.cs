@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -51,7 +52,15 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 //.AddDefaultUI()
                 .AddDefaultTokenProviders()
-                .Services;
+            .Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme,
+                    options =>
+                    {
+                        options.LoginPath = "/Identity/Account/Login"; 
+                        options.LogoutPath = "/Identity/Account/Logout";
+                        options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
+                        options.SlidingExpiration = true;
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                    });
 
 
         internal static IServiceCollection AddUserClaimsPrincipalFactory(this IServiceCollection services) =>
