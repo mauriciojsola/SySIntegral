@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Infrastructure.Auth;
+using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Services.Messaging;
 
 namespace SySIntegral.Web
@@ -32,6 +33,8 @@ namespace SySIntegral.Web
             services.AddSySAuth(Configuration);
 
             services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
+
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
             //services.Configure<SendGridEmailSenderOptions>(options =>
             //{

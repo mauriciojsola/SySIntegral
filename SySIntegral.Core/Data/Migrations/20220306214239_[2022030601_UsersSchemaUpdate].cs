@@ -26,7 +26,8 @@ namespace SySIntegral.Core.Data.Migrations
                 name: "Organization",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    //Id = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -45,7 +46,7 @@ namespace SySIntegral.Core.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                type: "nvarchar(50)",
+                type: "int",
                 name: "OrganizationId",
                 table: "AspNetUsers",
                 nullable: false);
@@ -77,6 +78,8 @@ namespace SySIntegral.Core.Data.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_User_Organization",
                 table: "AspNetUsers");
+
+            migrationBuilder.DropIndex(name:"IX_AspNetUsers_OrganizationId",table:"AspNetUsers");
 
             migrationBuilder.DropColumn(
                 name: "OrganizationId",

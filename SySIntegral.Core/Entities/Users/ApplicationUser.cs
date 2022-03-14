@@ -10,7 +10,7 @@ namespace SySIntegral.Core.Entities.Users
     {
         public Organization Organization { get; set; }
 
-        public string OrganizationId { get; set; }
+        public int OrganizationId { get; set; }
 
         [PersonalData]
         public string FirstName { get; set; }

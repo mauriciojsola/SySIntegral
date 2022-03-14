@@ -16,10 +16,10 @@ namespace SySIntegral.Core.Infrastructure.Auth
         public override async Task<ClaimsPrincipal> CreateAsync(ApplicationUser user)
         {
             var principal = await base.CreateAsync(user);
-            if (!string.IsNullOrWhiteSpace(user.OrganizationId))
+            if (user.Organization != null)
             {
                 ((ClaimsIdentity)principal.Identity).AddClaims(new[] {
-                    new Claim(SySClaims.OrganizationId, user.OrganizationId)
+                    new Claim(SySClaims.OrganizationId, user.Organization.Id.ToString())
                 });
             }
             return principal;

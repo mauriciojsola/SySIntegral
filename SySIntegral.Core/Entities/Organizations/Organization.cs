@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SySIntegral.Core.Entities.Organizations
 {
-    public class Organization : EntityBase<string>
+    public class Organization : BaseEntity
     {
         public string Name { get; set; }
     }
