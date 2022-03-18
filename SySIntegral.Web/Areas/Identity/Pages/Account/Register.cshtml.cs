@@ -28,18 +28,21 @@ namespace SySIntegral.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IRepository<Organization> _organizationRepository;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager,
             IRepository<Organization> organizationRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
             _organizationRepository = organizationRepository;
         }
 
@@ -67,10 +70,16 @@ namespace SySIntegral.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "User Role")]
+            public string UserRole { get; set; }
         }
+
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            ViewData["roles"] = _roleManager.Roles.ToList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -82,7 +91,7 @@ namespace SySIntegral.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var org = _organizationRepository.Get(1);
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, OrganizationId = 1, Organization = org};
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, OrganizationId = 1, Organization = org };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

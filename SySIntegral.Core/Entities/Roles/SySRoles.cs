@@ -8,5 +8,6 @@ namespace SySIntegral.Core.Entities.Roles
     {
         public const string Administrator = "Administrator";
         public const string OrganizationAdministrator = "Organization Administrator";
+        public const string User = "User";
     }
 }

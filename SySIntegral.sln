@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Web", "SySInteg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Api", "SySIntegral.Api\SySIntegral.Api.csproj", "{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SySIntegral.Core.Test", "SySIntegral.Core.Test\SySIntegral.Core.Test.csproj", "{3D6C2FF0-918B-484C-BEE3-048F80DB8425}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Core.Test", "SySIntegral.Core.Test\SySIntegral.Core.Test.csproj", "{3D6C2FF0-918B-484C-BEE3-048F80DB8425}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,7 +8,7 @@ using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Core.Test
 {
-    public class Tests
+    public class OrganizationRepositoryTest
     {
         [SetUp]
         public void Setup()
