@@ -61,25 +61,30 @@ namespace SySIntegral.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y como máximo {1} caracteres.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Contraseña")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Confirmar contraseña")]
+            [Compare("Password", ErrorMessage = "La contraseña y su confirmación no coinciden.")]
             public string ConfirmPassword { get; set; }
 
             [Required]
-            [Display(Name = "User Role")]
+            [Display(Name = "Rol")]
             public string UserRole { get; set; }
+
+            [Required]
+            [Display(Name = "Organización")]
+            public int OrganizationId { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ViewData["roles"] = _roleManager.Roles.ToList();
+            ViewData["organizations"] = _organizationRepository.GetAll().ToList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -90,13 +95,17 @@ namespace SySIntegral.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var org = _organizationRepository.Get(1);
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, OrganizationId = 1, Organization = org };
+                var org = _organizationRepository.Get(Input.OrganizationId);
+                var role = _roleManager.FindByIdAsync(Input.UserRole).Result;
+
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, OrganizationId = Input.OrganizationId, Organization = org };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    
+                    await _userManager.AddToRoleAsync(user, role.Name);
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
@@ -106,7 +115,7 @@ namespace SySIntegral.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        $"Por favor confirme su cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>presionando aquí</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -124,6 +133,8 @@ namespace SySIntegral.Areas.Identity.Pages.Account
                 }
             }
 
+            ViewData["roles"] = _roleManager.Roles.ToList();
+            ViewData["organizations"] = _organizationRepository.GetAll().ToList();
             // If we got this far, something failed, redisplay form
             return Page();
         }

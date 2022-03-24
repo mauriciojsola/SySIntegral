@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using SySIntegral.Core.Entities.Users
+@using SySIntegral.Core.Entities.Roles
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,18 +24,27 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
+
                         @*<li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Roles/Index">Roles</a>
-        </li>*@
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                            </li>*@
+                        
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole(SySRoles.Administrator))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Administrar
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                                    <a class="dropdown-item" href="#">Usuarios</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
-                        </li>
 
-                        @*
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-        </li>*@
                     </ul>
                 </div>
             </div>
