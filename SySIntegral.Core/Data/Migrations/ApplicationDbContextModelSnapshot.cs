@@ -238,6 +238,10 @@ namespace SySIntegral.Core.Data.Migrations
 
                     b.HasIndex("OrganizationId");
 
+                    b.HasOne("SySIntegral.Core.Entities.Organizations.Organization", null)
+                                .WithMany()
+                                .HasForeignKey("OrganizationId").IsRequired();
+
                     b.ToTable("AspNetUsers");
                 });
 
@@ -292,12 +296,6 @@ namespace SySIntegral.Core.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SySIntegral.Core.Entities.Users.ApplicationUser", b =>
-                {
-                    b.HasOne("SySIntegral.Core.Entities.Organizations.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId");
-                });
 #pragma warning restore 612, 618
         }
     }

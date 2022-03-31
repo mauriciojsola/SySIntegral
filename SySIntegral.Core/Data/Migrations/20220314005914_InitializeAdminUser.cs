@@ -1,7 +1,9 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Migrations;
 using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Entities.Roles;
+using SySIntegral.Core.Entities.Users;
 
 namespace SySIntegral.Core.Data.Migrations
 {
@@ -9,6 +11,10 @@ namespace SySIntegral.Core.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
+            var hasher = new PasswordHasher<ApplicationUser>();
+            var passwordHashed = hasher.HashPassword(null, "123456");
+
             migrationBuilder.Sql($@"
 
                                 INSERT INTO AspNetRoles (Id,Name,NormalizedName) VALUES ('{Guid.NewGuid().ToString()}','{SySRoles.Administrator}','{SySRoles.Administrator.ToUpperInvariant()}');
@@ -24,7 +30,7 @@ namespace SySIntegral.Core.Data.Migrations
                                 VALUES (N'd3b5b81b-db61-4371-a637-18d08a95ee1a', N'mauriciojsola11@gmail.com', 
                                 N'MAURICIOJSOLA11@GMAIL.COM', N'mauriciojsola11@gmail.com', 
                                 N'MAURICIOJSOLA11@GMAIL.COM', 1, N'AQAAAAEAACcQAAAAEIJRmRTbpjTMus1VEgVodwAy59HVpHRhAfdoaDsZ4F+n70UEPkrp9OgJv50b+PaMhg==', 
-                                N'JGT5M647H3UOTVWMTM434U26VMMQEKQD', N'b5914415-18f8-4912-ab64-2844e7300445', NULL, 0, 0, NULL, 1, 0, NULL, NULL, (SELECT Id FROM Organization WHERE 
+                                N'JGT5M647H3UOTVWMTM434U26VMMQEKQD', N'b5914415-18f8-4912-ab64-2844e7300445', NULL, 0, 0, NULL, 1, 0, 'Mauricio', 'Sola', (SELECT Id FROM Organization WHERE 
                                 [Name]='SySIntegral SRL'))
 
                             INSERT INTO AspNetUserRoles(UserId,RoleId) VALUES ((SELECT u.Id FROM AspNetUsers u WHERE u.UserName = 'mauriciojsola11@gmail.com'  ),(SELECT r.Id FROM AspNetRoles r WHERE [Name]='{SySRoles.Administrator}'));
