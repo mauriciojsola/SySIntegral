@@ -8,6 +8,13 @@ namespace SySIntegral.Core.Entities.Users
 {
     public class ApplicationUser : IdentityUser
     {
+        //public ApplicationUser()
+        //{
+        //    Roles = new List<IdentityRole>();
+        //}
+
+        //public ICollection<IdentityRole> Roles { get; set; }
+
         public Organization Organization { get; set; }
 
         public int OrganizationId { get; set; }

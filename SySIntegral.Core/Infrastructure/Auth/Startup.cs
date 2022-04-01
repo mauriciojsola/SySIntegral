@@ -48,7 +48,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
                     options.Password.RequireLowercase = false;
                     options.Password.RequiredLength = 6;
                 })
-                //.AddRoles<RoleManager<IdentityRole>>()
+                //.AddRoles<RoleManager<IdentityRole<string>>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 //.AddDefaultUI()
                 .AddDefaultTokenProviders()

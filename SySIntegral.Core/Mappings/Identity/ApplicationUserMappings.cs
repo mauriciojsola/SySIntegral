@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SySIntegral.Core.Entities.Users;
 
@@ -8,6 +9,7 @@ namespace SySIntegral.Core.Mappings.Identity
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> entity)
         {
+            entity.Property(p => p.Id).HasColumnName("Id");
             // Primary key
             entity.HasKey(u => u.Id);
 
@@ -50,18 +52,18 @@ namespace SySIntegral.Core.Mappings.Identity
             // The relationships between User and other entity types
             // Note that these relationships are configured with no navigation properties
 
-            //// Each User can have many UserClaims
-            //b.HasMany<TUserClaim>().WithOne().HasForeignKey(uc => uc.UserId).IsRequired();
+            // Each User can have many UserClaims
+            //entity.HasMany<IdentityUserClaim<string>>().WithOne().HasForeignKey(uc => uc.UserId).IsRequired();
 
             //// Each User can have many UserLogins
-            //b.HasMany<TUserLogin>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
+            //entity.HasMany<IdentityUserLogin<string>>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
 
             //// Each User can have many UserTokens
-            //b.HasMany<TUserToken>().WithOne().HasForeignKey(ut => ut.UserId).IsRequired();
+            //entity.HasMany<IdentityUserToken<string>>().WithOne().HasForeignKey(ut => ut.UserId).IsRequired();
 
-            //// Each User can have many entries in the UserRole join table
-            //b.HasMany<TUserRole>().WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
-                     
+            // Each User can have many entries in the UserRole join table
+            //entity.HasMany<IdentityUserRole<string>>()
+            //    .WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
 
         }
     }

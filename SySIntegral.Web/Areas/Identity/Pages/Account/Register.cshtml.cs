@@ -20,7 +20,7 @@ using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrador")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

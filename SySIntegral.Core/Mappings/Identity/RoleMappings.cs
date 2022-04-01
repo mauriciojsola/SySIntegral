@@ -31,11 +31,11 @@ namespace SySIntegral.Core.Mappings.Identity
             // The relationships between Role and other entity types
             // Note that these relationships are configured with no navigation properties
 
-            //// Each Role can have many entries in the UserRole join table
-            //entity.HasMany<TUserRole>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
+            // Each Role can have many entries in the UserRole join table
+            //entity.HasMany<IdentityUserRole<string>>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
 
-            //// Each Role can have many associated RoleClaims
-            //entity.HasMany<TRoleClaim>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
+            // Each Role can have many associated RoleClaims
+            //entity.HasMany<IdentityRoleClaim<string>>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
 
         }
     }
