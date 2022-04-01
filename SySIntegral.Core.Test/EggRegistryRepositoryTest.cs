@@ -1,15 +1,18 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SySIntegral.Core.Data;
+using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Entities.Organizations;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Core.Test
 {
-    public class OrganizationRepositoryTest
+    public class EggRegistryRepositoryTest
     {
         [SetUp]
         public void Setup()
@@ -17,7 +20,7 @@ namespace SySIntegral.Core.Test
         }
 
         [Test]
-        public void Test1()
+        public void TestEggRegistryRepository()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDB")
@@ -25,14 +28,19 @@ namespace SySIntegral.Core.Test
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repo = new OrganizationRepository(context);
-                repo.Insert(new Organization { Name = "TEST Org" });
+                var repo = new EggRegistryRepository(context);
+                repo.Insert(new EggRegistry
+                {
+                    DeviceId = Guid.NewGuid().ToString(),
+                    Timestamp = DateTime.Today,
+                    WhiteEggsCount = 1500,
+                    //ColorEggsCount = 689
+                });
 
                 var result = repo.GetAll();
                 Assert.AreEqual(1, result.Count());
             }
-
-
+            
             //var services = new ServiceCollection();
             //services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 

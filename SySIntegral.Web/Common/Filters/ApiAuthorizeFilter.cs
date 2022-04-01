@@ -13,25 +13,24 @@ namespace SySIntegral.Web.Common.Filters
 {
     public class ApiAuthorizeFilter : IActionFilter
     {
-        private const string DeviceIdKey = "X-SySIntegral-DeviceId";
+        private const string ClientIdKey = "X-SySIntegral-ClientId";
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            // Allow Anonymous skips all authorization
+            // AllowAnonymous skips any authorization
             if (context.Filters.Any(item => item is IAllowAnonymousFilter))
             {
                 return;
             }
 
-            var deviceIdValue =
-                context.HttpContext.Request.Headers.FirstOrDefault(x => !string.IsNullOrEmpty(x.Key) && x.Key.Equals(DeviceIdKey)).Value.ToString();
+            var clientIdValue =
+                context.HttpContext.Request.Headers.FirstOrDefault(x => !string.IsNullOrEmpty(x.Key) && x.Key.Equals(ClientIdKey)).Value.ToString();
 
-            if (string.IsNullOrEmpty(deviceIdValue))
+            if (string.IsNullOrEmpty(clientIdValue))
             {
                 //context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 //context.Result = new BadRequestObjectResult("Unauthorized");

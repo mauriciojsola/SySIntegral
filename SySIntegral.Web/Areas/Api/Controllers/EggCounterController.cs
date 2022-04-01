@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SySIntegral.Core.Entities.EggsRegistry;
+using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Web.Common.Filters;
 
 namespace SySIntegral.Web.Areas.Api.Controllers
@@ -11,10 +15,12 @@ namespace SySIntegral.Web.Areas.Api.Controllers
     public class EggCounterController : ControllerBase
     {
        private readonly ILogger<EggCounterController> _logger;
+       private readonly IRepository<EggRegistry> _eggRegistryRepository;
 
-        public EggCounterController(ILogger<EggCounterController> logger)
+        public EggCounterController(ILogger<EggCounterController> logger,IRepository<EggRegistry> eggRegistryRepository)
         {
             _logger = logger;
+            _eggRegistryRepository = eggRegistryRepository;
         }
 
         [HttpGet]
@@ -26,13 +32,25 @@ namespace SySIntegral.Web.Areas.Api.Controllers
 
         [HttpPost]
         [Route("registro")]
-        public IActionResult  Register(EggCounterRegister data)
+        public IActionResult  Register(EggCounterRegistry data)
         {
+            if (data == null) return BadRequest("No data provided");
+            if (string.IsNullOrEmpty(data.DeviceId)) return BadRequest("DispositivoID es requerido");
+            if (!data.WhiteEggsCount.HasValue && !data.ColorEggsCount.HasValue) return BadRequest("La cantidad de al menos un tipo de color de huevos es requerida.");
+            
+            _eggRegistryRepository.Insert(new EggRegistry
+            {
+                DeviceId = data.DeviceId,
+                Timestamp = DateTime.Now,
+                WhiteEggsCount = data.WhiteEggsCount.GetValueOrDefault(0),
+                ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0)
+            });
+
             return Ok(data);
         }
     }
 
-    public class EggCounterRegister
+    public class EggCounterRegistry
     {
         [JsonProperty("DispositivoID")]
         public string DeviceId { get; set; }
@@ -40,7 +58,7 @@ namespace SySIntegral.Web.Areas.Api.Controllers
         [JsonProperty("CantidadHuevosBlancos")]
         public int? WhiteEggsCount { get; set; }
 
-        [JsonProperty("CantidadHuevosColorados")]
-        public int? BrownEggsCount { get; set; }
+        [JsonProperty("CantidadHuevosColor")]
+        public int? ColorEggsCount { get; set; }
     }
 }
