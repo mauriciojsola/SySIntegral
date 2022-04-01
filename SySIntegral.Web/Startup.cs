@@ -9,6 +9,7 @@ using SySIntegral.Core.Data;
 using SySIntegral.Core.Infrastructure.Auth;
 using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Services.Messaging;
+using SySIntegral.Web.Common.Filters;
 
 namespace SySIntegral.Web
 {
@@ -35,6 +36,7 @@ namespace SySIntegral.Web
             services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<ApiAuthorizeFilter>();
 
             //services.Configure<SendGridEmailSenderOptions>(options =>
             //{
@@ -42,7 +44,7 @@ namespace SySIntegral.Web
             //    options.SenderEmail = Configuration["ExternalProviders:SendGrid:SenderEmail"];
             //    options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
             //});
-            services.AddControllersWithViews(); // When using Pages along with Controllers+Views
+            services.AddControllersWithViews().AddNewtonsoftJson(); // When using Pages along with Controllers+Views
             services.AddRazorPages();
         }
 
