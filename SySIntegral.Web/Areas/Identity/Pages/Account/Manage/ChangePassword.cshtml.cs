@@ -35,12 +35,12 @@ namespace SySIntegral.Web.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Contraseña actual es requerida")]
             [DataType(DataType.Password)]
             [Display(Name = "Contraseña actual")]
             public string OldPassword { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "La nueva contraseña es requerida")]
             [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y como máximo {1} caracteres de largo.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Nueva contraseña")]

@@ -1,0 +1,59 @@
+﻿@using SySIntegral.Core.Entities.Organizations
+@model SySIntegral.Web.Areas.Admin.Models.Users.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Crear Usuario";
+    var roles = (List<IdentityRole>)ViewData["roles"];
+    var organizations = (List<Organization>)ViewData["organizations"];
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<input type="hidden" asp-for="Id" />
+
+<div class="form-group">
+    <label asp-for="OrganizationId"></label>
+    <select asp-for="OrganizationId" class="form-control" asp-items='new SelectList(organizations,"Id","Name")'>
+    </select>
+    <span asp-validation-for="OrganizationId" class="text-danger"></span>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="RoleId"></label>
+            <select asp-for="RoleId" class="form-control" asp-items='new SelectList(roles,"Id","Name")'>
+            </select>
+            <span asp-validation-for="RoleId" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+
+

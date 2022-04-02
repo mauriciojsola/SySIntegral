@@ -10,12 +10,18 @@ namespace SySIntegral.Web.Areas.Admin.Models.Users
     {
         public string Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Email es requerido")]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
+        [Display(Name = "Nombre")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Apellido")]
+        public string LastName { get; set; }
+
+        //[Required]
         [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y como máximo {1} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
@@ -26,11 +32,11 @@ namespace SySIntegral.Web.Areas.Admin.Models.Users
         [Compare("Password", ErrorMessage = "La contraseña y su confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El rol es requerido")]
         [Display(Name = "Rol")]
-        public string UserRole { get; set; }
+        public string RoleId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "La organización es requerida")]
         [Display(Name = "Organización")]
         public int OrganizationId { get; set; }
     }

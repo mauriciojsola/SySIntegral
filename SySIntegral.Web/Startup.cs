@@ -28,9 +28,8 @@ namespace SySIntegral.Web
             // https://codewithmukesh.com/blog/user-management-in-aspnet-core-mvc/
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Scoped);
+
             services.AddSySAuth(Configuration);
 
             services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();

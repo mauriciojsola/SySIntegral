@@ -46,14 +46,15 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [Route("Create")]
         public IActionResult Create()
         {
-            ViewData["roles"] = _roleManager.Roles.ToList();
-            ViewData["organizations"] = _organizationRepository.GetAll().ToList();
+            InitModel();
             return View(new CreateUserViewModel());
         }
 
         [Route("Edit")]
         public async Task<IActionResult> Edit(string id)
         {
+            InitModel();
+
             var user = await _userManager.FindByIdAsync(id);
             var roles = _roleManager.Roles.ToList();
             var userRole = "";
@@ -68,15 +69,15 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
             if (user != null)
             {
-                ViewData["roles"] = roles;
-                ViewData["organizations"] = _organizationRepository.GetAll().ToList();
                 return View(new CreateUserViewModel
                 {
                     Email = user.Email,
                     Password = "",
                     Id = user.Id,
                     OrganizationId = user.OrganizationId,
-                    UserRole = userRole
+                    RoleId = userRole,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
                 });
             }
             else
@@ -87,47 +88,137 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [Route("Update")]
         public async Task<IActionResult> Update(CreateUserViewModel model)
         {
+            var errors = ValidateModel(model);
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                InitModel();
+                return View("Edit", model);
+            }
+
             var user = !string.IsNullOrWhiteSpace(model.Id)
                 ? await _userManager.FindByIdAsync(model.Id)
             : new ApplicationUser();
 
             var org = _organizationRepository.Get(model.OrganizationId);
-            var role = _roleManager.FindByIdAsync(model.UserRole).Result;
+            var role = _roleManager.FindByIdAsync(model.RoleId).Result;
 
             if (user != null)
             {
                 user.OrganizationId = model.OrganizationId;
                 user.Organization = org;
                 user.UserName = model.Email;
-
-                if (!string.IsNullOrEmpty(model.Email))
-                    user.Email = model.Email;
-                else
-                    ModelState.AddModelError("", "El Email es requerido");
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
 
                 if (!string.IsNullOrEmpty(model.Password))
                     user.PasswordHash = _passwordHasher.HashPassword(user, model.Password);
-                else
-                    ModelState.AddModelError("", "La contraseña es requerida");
 
-                if (!string.IsNullOrEmpty(model.Email) && !string.IsNullOrEmpty(model.Password))
+                var result = !string.IsNullOrWhiteSpace(model.Id)
+                    ? await _userManager.UpdateAsync(user)
+                    : await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
                 {
-                    var result = !string.IsNullOrWhiteSpace(model.Id) ? await _userManager.UpdateAsync(user) : await _userManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
+                    if (!_userManager.IsInRoleAsync(user, role.Name).Result)
                     {
+                        ClearUserRoles(user);
                         var r = await _userManager.AddToRoleAsync(user, role.Name);
-                        if (result.Succeeded)
+                        if (r.Succeeded)
                             return RedirectToAction("Index");
                         else
-                            Errors(result);
+                        {
+                            Errors(r);
+                            InitModel();
+                            return View("Edit", model);
+                        }
                     }
-                    else
-                        Errors(result);
+                }
+                else
+                {
+                    Errors(result);
+                    InitModel();
+                    return View("Edit", model);
                 }
             }
             else
+            {
                 ModelState.AddModelError("", "Usuario no encontrado");
-            return View("Edit", user);
+                InitModel();
+                return View("Edit", model);
+            }
+
+
+            return RedirectToAction("Index");
+        }
+
+        private void ClearUserRoles(ApplicationUser user)
+        {
+            var roles = _roleManager.Roles.ToList();
+            foreach (var role in roles)
+            {
+                if (_userManager.IsInRoleAsync(user, role.Name).Result)
+                {
+                    var res = _userManager.RemoveFromRoleAsync(user, role.Name).Result;
+                }
+            }
+        }
+
+        private void InitModel()
+        {
+            ViewData["roles"] = _roleManager.Roles.ToList();
+            ViewData["organizations"] = _organizationRepository.GetAll().ToList();
+        }
+
+        private List<string> ValidateModel(CreateUserViewModel model)
+        {
+            var errors = new List<string>();
+            if (model.OrganizationId <= 0)
+                errors.Add("La organización es requerida");
+
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                errors.Add("El email es requerido");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.RoleId))
+            {
+                errors.Add("El rol es requerido");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Id))
+            {
+                // New
+                if (string.IsNullOrWhiteSpace(model.Password))
+                {
+                    errors.Add("La contraseña es requerida");
+                }
+                if (string.IsNullOrWhiteSpace(model.ConfirmPassword))
+                {
+                    errors.Add("La confirmación de contraseña es requerida");
+                }
+
+                if ((!string.IsNullOrWhiteSpace(model.Password) || !string.IsNullOrWhiteSpace(model.ConfirmPassword))
+                    && model.Password != model.ConfirmPassword)
+                {
+                    errors.Add("La contraseña y su confirmación no coinciden");
+                }
+            }
+            else
+            {
+                // Edit
+                if ((!string.IsNullOrWhiteSpace(model.Password) || !string.IsNullOrWhiteSpace(model.ConfirmPassword))
+                    && model.Password != model.ConfirmPassword)
+                {
+                    errors.Add("La contraseña y su confirmación no coinciden");
+                }
+            }
+
+            return errors;
         }
 
         [HttpPost]
