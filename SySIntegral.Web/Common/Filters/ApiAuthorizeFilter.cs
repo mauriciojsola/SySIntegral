@@ -34,7 +34,7 @@ namespace SySIntegral.Web.Common.Filters
             {
                 //context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 //context.Result = new BadRequestObjectResult("Unauthorized");
-                context.Result = new UnauthorizedResult();
+                //context.Result = new UnauthorizedResult();
             }
         }
     }
