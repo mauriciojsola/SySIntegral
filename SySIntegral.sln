@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Api", "SySInteg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Core.Test", "SySIntegral.Core.Test\SySIntegral.Core.Test.csproj", "{3D6C2FF0-918B-484C-BEE3-048F80DB8425}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{38BC28DF-71D2-4DC9-93D1-0B326E30F339}"
+	ProjectSection(SolutionItems) = preProject
+		SQLScripts\20220403_InitialData.sql = SQLScripts\20220403_InitialData.sql
+		SQLScripts\20220403_InitialSchema.sql = SQLScripts\20220403_InitialSchema.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

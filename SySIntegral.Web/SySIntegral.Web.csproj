@@ -17,8 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Content\EmailTemplates\ConfirmAccount.html" />
-    <Content Include="Content\EmailTemplates\ForgotPassword.html" />
+    <Content Include="Content\EmailTemplates\ForgotPassword.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
