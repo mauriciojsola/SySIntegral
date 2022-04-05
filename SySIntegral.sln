@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", 
 	ProjectSection(SolutionItems) = preProject
 		SQLScripts\20220403_InitialData.sql = SQLScripts\20220403_InitialData.sql
 		SQLScripts\20220403_InitialSchema.sql = SQLScripts\20220403_InitialSchema.sql
+		SQLScripts\20220404_AddTransferTime.sql = SQLScripts\20220404_AddTransferTime.sql
 	EndProjectSection
 EndProject
 Global

@@ -1,0 +1,9 @@
+
+
+ALTER TABLE EggRegistry 
+ADD ReadTimestamp DATETIME2 NULL; 
+
+ALTER TABLE EggRegistry 
+ADD ExportTimestamp DATETIME2 NULL; 
+
+-- ADD ExportTimestamp DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP; 

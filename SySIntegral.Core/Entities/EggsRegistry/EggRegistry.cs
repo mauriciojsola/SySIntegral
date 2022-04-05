@@ -10,5 +10,8 @@ namespace SySIntegral.Core.Entities.EggsRegistry
         public DateTime Timestamp { get; set; }
         public int WhiteEggsCount { get; set; }
         public int ColorEggsCount { get; set; }
+        public DateTime? ReadTimestamp { get; set; }
+        public DateTime? ExportTimestamp { get; set; }
+
     }
 }

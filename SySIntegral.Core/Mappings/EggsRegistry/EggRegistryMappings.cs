@@ -32,7 +32,13 @@ namespace SySIntegral.Core.Mappings.EggsRegistry
             entity.Property(p => p.ColorEggsCount)
                 .HasColumnType("int")
                 .HasDefaultValue(0);
-                    
+
+            entity.Property(p => p.ReadTimestamp)
+                .HasColumnType("datetime2");
+
+            entity.Property(p => p.ExportTimestamp)
+                .HasColumnType("datetime2");
+
             entity.ToTable("EggRegistry");
             
         }

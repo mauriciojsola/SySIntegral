@@ -1,0 +1,30 @@
+﻿@model IEnumerable<SySIntegral.Core.Entities.EggsRegistry.EggRegistry>
+@{
+    ViewData["Title"] = "Registros";
+}
+
+<h1>Registros</h1>
+@*<a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Roles" asp-action="Create">Crear Role</a>*@
+<div class="table-responsive-md">
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>Dispositivo</td>
+            <td>Huevos Blancos</td>
+            <td>Huevos Color</td>
+            <td>Fecha</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var record in Model)
+    {
+        <tr>
+            <td>@record.DeviceId</td>
+            <td>@record.WhiteEggsCount</td>
+            <td>@record.ColorEggsCount</td>
+            <td>@record.Timestamp.ToString("g")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>

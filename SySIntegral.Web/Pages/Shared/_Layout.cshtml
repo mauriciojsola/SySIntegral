@@ -45,6 +45,8 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Registries" asp-action="Index">Registros</a>
                                     @*<div class="dropdown-divider"></div>*@
                                 </div>
                             </li>
@@ -64,7 +66,7 @@
 
     <footer class="border-top footer text-muted bg-dark">
         <div class="container">
-            &copy; 2020 - SySIntegral
+            &copy; @DateTime.Now.Year - SySIntegral
         </div>
     </footer>
 

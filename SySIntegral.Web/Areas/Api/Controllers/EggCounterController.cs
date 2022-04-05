@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -14,10 +15,10 @@ namespace SySIntegral.Web.Areas.Api.Controllers
     [ServiceFilter(typeof(ApiAuthorizeFilter))]
     public class EggCounterController : ControllerBase
     {
-       private readonly ILogger<EggCounterController> _logger;
-       private readonly IRepository<EggRegistry> _eggRegistryRepository;
+        private readonly ILogger<EggCounterController> _logger;
+        private readonly IRepository<EggRegistry> _eggRegistryRepository;
 
-        public EggCounterController(ILogger<EggCounterController> logger,IRepository<EggRegistry> eggRegistryRepository)
+        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
@@ -25,28 +26,42 @@ namespace SySIntegral.Web.Areas.Api.Controllers
 
         [HttpGet]
         [Route("status")]
-        public IActionResult  GetStatus()
+        public IActionResult GetStatus()
         {
             return Ok("active");
         }
 
         [HttpPost]
         [Route("registro")]
-        public IActionResult  Register(EggCounterRegistry data)
+        public IActionResult Register(EggCounterRegistry data)
         {
             if (data == null) return BadRequest("No data provided");
             if (string.IsNullOrEmpty(data.DeviceId)) return BadRequest("DispositivoID es requerido");
             if (!data.WhiteEggsCount.HasValue && !data.ColorEggsCount.HasValue) return BadRequest("La cantidad de al menos un tipo de color de huevos es requerida.");
-            
+
             _eggRegistryRepository.Insert(new EggRegistry
             {
                 DeviceId = data.DeviceId,
                 Timestamp = DateTime.Now,
                 WhiteEggsCount = data.WhiteEggsCount.GetValueOrDefault(0),
-                ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0)
+                ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0),
+                ReadTimestamp = ParseDate(data.ReadTimestamp),
+                ExportTimestamp = ParseDate(data.ExportTimestamp)
             });
 
             return Ok(data);
+        }
+
+        private DateTime? ParseDate(string date)
+        {
+            try
+            {
+                return DateTime.ParseExact(date, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                return default(DateTime?);
+            }
         }
     }
 
@@ -60,5 +75,11 @@ namespace SySIntegral.Web.Areas.Api.Controllers
 
         [JsonProperty("CantidadHuevosColor")]
         public int? ColorEggsCount { get; set; }
+
+        [JsonProperty("FechaLectura")]
+        public string ReadTimestamp { get; set; }
+
+        [JsonProperty("FechaExportacion")]
+        public string ExportTimestamp { get; set; }
     }
 }
