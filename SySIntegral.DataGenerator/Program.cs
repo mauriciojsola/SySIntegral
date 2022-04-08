@@ -34,7 +34,7 @@ namespace SySIntegral.DataGenerator
 
             try
             {
-                var startDate = new DateTime(2022, 01, 04);
+                var startDate = new DateTime(2022, 01, 05);
                 for (var d = 0; d < 90; d++)
                 {
                     for (var h = 0; h < 24; h++)
@@ -47,7 +47,7 @@ namespace SySIntegral.DataGenerator
                             {
                                 DeviceId = "df73016a-b1bf-11ec-b909-0242ac120002",
                                 WhiteEggsCount = GetRandomNumber(100, 1300),
-                                ColorEggsCount = GetRandomNumber(100, 1300),
+                                ColorEggsCount = GetRandomNumber(100, 1000),
                                 ReadTimestamp = rDate.ToString("yyyyMMddHHmmss"),
                                 ExportTimestamp = rDate.ToString("yyyyMMddHHmmss"),
                             };

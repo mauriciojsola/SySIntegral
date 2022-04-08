@@ -20,9 +20,9 @@ namespace SySIntegral.Core.Repositories
             _entities = context.Set<T>();
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _entities.AsEnumerable();
+            return _entities;
         }
 
         public T Get(int id)
@@ -62,7 +62,7 @@ namespace SySIntegral.Core.Repositories
 
     public interface IRepository<T> where T : BaseEntity
     {
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
         T Get(int id);
         void Insert(T entity);
         void Update(T entity);

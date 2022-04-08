@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SySIntegral.Core.Entities.EggsRegistry;
@@ -16,16 +17,28 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         public RegistriesController(IRepository<EggRegistry> eggRegistryRepository)
         {
             _eggRegistryRepository = eggRegistryRepository;
-
         }
 
         [Route("")]
         public IActionResult Index()
         {
-            var users = _eggRegistryRepository.GetAll().OrderByDescending(x => x.ReadTimestamp).ToList();
-            return View(users);
+            var users = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
+            return View(new RegistriesModel
+            {
+                Registries = users,
+                TotalRecords = _eggRegistryRepository.GetAll().Count()
+            });
         }
 
-      
+        public class RegistriesModel
+        {
+            public RegistriesModel()
+            {
+                Registries = new List<EggRegistry>();
+            }
+
+            public IList<EggRegistry> Registries { get; set; }
+            public int TotalRecords { get; set; }
+        }
     }
 }

@@ -43,6 +43,7 @@ namespace SySIntegral.Web
             //    options.SenderEmail = Configuration["ExternalProviders:SendGrid:SenderEmail"];
             //    options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
             //});
+
             services.AddControllersWithViews().AddNewtonsoftJson(); // When using Pages along with Controllers+Views
             services.AddRazorPages();
         }
