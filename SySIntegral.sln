@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Core", "SySInte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Web", "SySIntegral.Web\SySIntegral.Web.csproj", "{EE9131AD-8F5B-48E3-84F3-4FB39A4E0CF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Api", "SySIntegral.Api\SySIntegral.Api.csproj", "{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Core.Test", "SySIntegral.Core.Test\SySIntegral.Core.Test.csproj", "{3D6C2FF0-918B-484C-BEE3-048F80DB8425}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{38BC28DF-71D2-4DC9-93D1-0B326E30F339}"
@@ -17,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", 
 		SQLScripts\20220403_InitialSchema.sql = SQLScripts\20220403_InitialSchema.sql
 		SQLScripts\20220404_AddTransferTime.sql = SQLScripts\20220404_AddTransferTime.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SySIntegral.DataGenerator", "SySIntegral.DataGenerator\SySIntegral.DataGenerator.csproj", "{34A4F499-525E-4808-BEF8-ECAC48962504}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,14 +32,14 @@ Global
 		{EE9131AD-8F5B-48E3-84F3-4FB39A4E0CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE9131AD-8F5B-48E3-84F3-4FB39A4E0CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE9131AD-8F5B-48E3-84F3-4FB39A4E0CF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7A75C02-4CFA-4274-8EC6-9FAABAAF94FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D6C2FF0-918B-484C-BEE3-048F80DB8425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D6C2FF0-918B-484C-BEE3-048F80DB8425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D6C2FF0-918B-484C-BEE3-048F80DB8425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D6C2FF0-918B-484C-BEE3-048F80DB8425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34A4F499-525E-4808-BEF8-ECAC48962504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34A4F499-525E-4808-BEF8-ECAC48962504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34A4F499-525E-4808-BEF8-ECAC48962504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34A4F499-525E-4808-BEF8-ECAC48962504}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

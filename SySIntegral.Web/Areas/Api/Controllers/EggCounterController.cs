@@ -37,6 +37,7 @@ namespace SySIntegral.Web.Areas.Api.Controllers
         {
             if (data == null) return BadRequest("No data provided");
             if (string.IsNullOrEmpty(data.DeviceId)) return BadRequest("DispositivoID es requerido");
+            if (string.IsNullOrEmpty(data.ReadTimestamp)) return BadRequest("La fecha de lectura es requerida");
             if (!data.WhiteEggsCount.HasValue && !data.ColorEggsCount.HasValue) return BadRequest("La cantidad de al menos un tipo de color de huevos es requerida.");
 
             _eggRegistryRepository.Insert(new EggRegistry
