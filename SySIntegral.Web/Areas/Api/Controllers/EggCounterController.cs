@@ -38,16 +38,21 @@ namespace SySIntegral.Web.Areas.Api.Controllers
             if (data == null) return BadRequest("No data provided");
             if (string.IsNullOrEmpty(data.DeviceId)) return BadRequest("DispositivoID es requerido");
             if (string.IsNullOrEmpty(data.ReadTimestamp)) return BadRequest("La fecha de lectura es requerida");
-            if (!data.WhiteEggsCount.HasValue && !data.ColorEggsCount.HasValue) return BadRequest("La cantidad de al menos un tipo de color de huevos es requerida.");
+            //if (!data.WhiteEggsCount.HasValue && !data.ColorEggsCount.HasValue) return BadRequest("La cantidad de al menos un tipo de color de huevos es requerida.");
 
+            var readTimestamp = ParseDate(data.ReadTimestamp);
+            var exportTimestamp = ParseDate(data.ExportTimestamp);
+
+            if (!readTimestamp.HasValue) return BadRequest($"La fecha de lectura tiene formato incorrecto. Debe ser YYYYMMDDHHMMSS.");
+            
             _eggRegistryRepository.Insert(new EggRegistry
             {
                 DeviceId = data.DeviceId,
                 Timestamp = DateTime.Now,
                 WhiteEggsCount = data.WhiteEggsCount.GetValueOrDefault(0),
                 ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0),
-                ReadTimestamp = ParseDate(data.ReadTimestamp),
-                ExportTimestamp = ParseDate(data.ExportTimestamp)
+                ReadTimestamp = readTimestamp,
+                ExportTimestamp = exportTimestamp
             });
 
             return Ok(data);
@@ -64,6 +69,7 @@ namespace SySIntegral.Web.Areas.Api.Controllers
                 return default(DateTime?);
             }
         }
+
     }
 
     public class EggCounterRegistry

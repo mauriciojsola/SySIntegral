@@ -3,17 +3,43 @@
     ViewData["Title"] = "Registros";
 }
 
-<h1>Registros</h1>
+
 @*<a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Roles" asp-action="Create">Crear Role</a>*@
+<h2>Totales</h2>
+<div class="table-responsive-md">
+    <table class="table table-bordered table-sm">
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Huevos Blancos</th>
+            <th>Huevos Color</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var record in Model.DateTotals)
+        {
+            <tr>
+                <td>@record.Date.ToString("d")</td>
+                <td>@record.Totals.WhiteEggsCount</td>
+                <td>@record.Totals.ColorEggsCount</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<hr/>
+<h1>Registros</h1>
 Mostrando @Model.Registries.Count de @Model.TotalRecords registros.
 <div class="table-responsive-md">
 <table class="table table-striped table-bordered table-sm">
     <thead>
         <tr>
-            <td>Dispositivo</td>
-            <td>Huevos Blancos</td>
-            <td>Huevos Color</td>
-            <td>Fecha</td>
+            <th>Dispositivo</th>
+            <th>Huevos Blancos</th>
+            <th>Huevos Color</th>
+            <th>Fecha</th>
         </tr>
     </thead>
     <tbody>
