@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +24,12 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 // Must add identity before adding auth!
                 .AddIdentity()
                 .AddUserClaimsPrincipalFactory();
+
+            var environment = services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment >();
+
+            services.AddDataProtection()
+                .SetApplicationName($"my-app-{environment.EnvironmentName}")
+                .PersistKeysToFileSystem(new DirectoryInfo($@"{environment.ContentRootPath}\keys"));
 
             return services;
 
@@ -59,7 +68,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
                         options.LogoutPath = "/Identity/Account/Logout";
                         options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
                         options.SlidingExpiration = true;
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                        options.ExpireTimeSpan = TimeSpan.FromHours(1);
                     });
 
 

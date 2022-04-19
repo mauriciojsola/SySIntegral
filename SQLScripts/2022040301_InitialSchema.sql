@@ -133,18 +133,29 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE TABLE [dbo].[EggRegistry](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[DeviceId] [nvarchar](100) NOT NULL,
 	[Timestamp] [datetime2](7) NOT NULL,
-	[WhiteEggsCount] [int] NULL,
-	[ColorEggsCount] [int] NULL,
+	[WhiteEggsCount] [int] NOT NULL,
+	[ColorEggsCount] [int] NOT NULL,
+	[ReadTimestamp] [datetime2](7) NULL,
+	[ExportTimestamp] [datetime2](7) NULL,
  CONSTRAINT [PK_EggRegistry] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+ALTER TABLE [dbo].[EggRegistry] ADD  CONSTRAINT [DF_EggRegistry_WhiteEggsCount]  DEFAULT ((0)) FOR [WhiteEggsCount]
+GO
+ALTER TABLE [dbo].[EggRegistry] ADD  CONSTRAINT [DF_EggRegistry_ColorEggsCount]  DEFAULT ((0)) FOR [ColorEggsCount]
+GO
+
+
+
+
 /****** Object:  Table [dbo].[Organization]    Script Date: 4/3/2022 9:15:27 PM ******/
 SET ANSI_NULLS ON
 GO

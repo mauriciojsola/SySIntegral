@@ -55,6 +55,8 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             public IList<EggRegistry> Registries { get; set; }
             public int TotalRecords { get; set; }
             public IList<DateTotal> DateTotals { get; set; }
+
+            public DateTotal TodaysTotals => DateTotals.First();
         }
     }
 

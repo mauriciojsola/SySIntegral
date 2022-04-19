@@ -11,12 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.Core.Test", "Sy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScripts", "SQLScripts", "{38BC28DF-71D2-4DC9-93D1-0B326E30F339}"
 	ProjectSection(SolutionItems) = preProject
-		SQLScripts\20220403_InitialData.sql = SQLScripts\20220403_InitialData.sql
-		SQLScripts\20220403_InitialSchema.sql = SQLScripts\20220403_InitialSchema.sql
-		SQLScripts\20220404_AddTransferTime.sql = SQLScripts\20220404_AddTransferTime.sql
+		SQLScripts\2022040301_InitialSchema.sql = SQLScripts\2022040301_InitialSchema.sql
+		SQLScripts\2022040302_InitialData.sql = SQLScripts\2022040302_InitialData.sql
+		SQLScripts\2022040401_AddTransferTime.sql = SQLScripts\2022040401_AddTransferTime.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SySIntegral.DataGenerator", "SySIntegral.DataGenerator\SySIntegral.DataGenerator.csproj", "{34A4F499-525E-4808-BEF8-ECAC48962504}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SySIntegral.DataGenerator", "SySIntegral.DataGenerator\SySIntegral.DataGenerator.csproj", "{34A4F499-525E-4808-BEF8-ECAC48962504}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

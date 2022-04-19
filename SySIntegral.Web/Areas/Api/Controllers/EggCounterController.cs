@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,6 +14,7 @@ namespace SySIntegral.Web.Areas.Api.Controllers
     [ApiController]
     [Route("api/contador-huevos")]
     [ServiceFilter(typeof(ApiAuthorizeFilter))]
+    [AllowAnonymous]
     public class EggCounterController : ControllerBase
     {
         private readonly ILogger<EggCounterController> _logger;
@@ -44,8 +46,8 @@ namespace SySIntegral.Web.Areas.Api.Controllers
             var exportTimestamp = ParseDate(data.ExportTimestamp);
 
             if (!readTimestamp.HasValue) return BadRequest($"La fecha de lectura tiene formato incorrecto. Debe ser YYYYMMDDHHMMSS.");
-            
-            _eggRegistryRepository.Insert(new EggRegistry
+
+            var reg = new EggRegistry
             {
                 DeviceId = data.DeviceId,
                 Timestamp = DateTime.Now,
@@ -53,7 +55,8 @@ namespace SySIntegral.Web.Areas.Api.Controllers
                 ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0),
                 ReadTimestamp = readTimestamp,
                 ExportTimestamp = exportTimestamp
-            });
+            };
+            _eggRegistryRepository.Insert(reg);
 
             return Ok(data);
         }

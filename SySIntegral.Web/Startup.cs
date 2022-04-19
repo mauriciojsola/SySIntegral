@@ -44,7 +44,9 @@ namespace SySIntegral.Web
             //    options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
             //});
 
-            services.AddControllersWithViews().AddNewtonsoftJson(); // When using Pages along with Controllers+Views
+            services.AddControllersWithViews() // When using Pages along with Controllers+Views
+                .AddNewtonsoftJson()
+                .AddRazorRuntimeCompilation(); 
             services.AddRazorPages();
         }
 
