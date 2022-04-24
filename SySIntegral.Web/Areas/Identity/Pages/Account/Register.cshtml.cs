@@ -95,7 +95,7 @@ namespace SySIntegral.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var org = _organizationRepository.Get(Input.OrganizationId);
+                var org = _organizationRepository.GetById(Input.OrganizationId);
                 var role = _roleManager.FindByIdAsync(Input.UserRole).Result;
 
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, OrganizationId = Input.OrganizationId, Organization = org };

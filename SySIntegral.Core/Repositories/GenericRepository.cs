@@ -25,7 +25,7 @@ namespace SySIntegral.Core.Repositories
             return _entities;
         }
 
-        public T Get(int id)
+        public T GetById(int id)
         {
             return _entities.SingleOrDefault(s => s.Id == id);
         }
@@ -58,14 +58,24 @@ namespace SySIntegral.Core.Repositories
             _entities.Remove(entity);
             context.SaveChanges();
         }
+
+        public void Refresh(T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            context.Entry(entity).Reload();
+        }
     }
 
     public interface IRepository<T> where T : BaseEntity
     {
         IQueryable<T> GetAll();
-        T Get(int id);
+        T GetById(int id);
         void Insert(T entity);
         void Update(T entity);
         void Delete(T entity);
+        void Refresh(T entity);
     }
 }

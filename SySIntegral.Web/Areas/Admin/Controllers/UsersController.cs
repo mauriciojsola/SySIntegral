@@ -103,7 +103,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 ? await _userManager.FindByIdAsync(model.Id)
             : new ApplicationUser();
 
-            var org = _organizationRepository.Get(model.OrganizationId);
+            var org = _organizationRepository.GetById(model.OrganizationId);
             var role = _roleManager.FindByIdAsync(model.RoleId).Result;
 
             if (user != null)

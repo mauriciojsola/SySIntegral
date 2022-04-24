@@ -89,3 +89,38 @@ html {
         font-size: 16px;
     }
 }
+
+.registries-container .card.counter {
+    border-width: 2px; 
+}
+.registries-container .card.counter-color {
+    border-color: #d48b62;
+    background-color: #d48b62;
+    color: white;
+}
+
+.registries-container .card.counter-white {
+    color: #666666;
+}
+
+.registries-container .counter-list .counter-color {
+    border: 1px solid #d48b62;
+    color: #d48b62;
+    min-width: 75px;
+}
+
+.registries-container .counter-list .counter-white {
+    color: #666666;
+    border: 1px solid #666666;
+    min-width: 75px;
+}
+
+.registries-container .counter-list .list-group-item {
+    padding: 8px 20px;
+}
+
+@media (max-width: 640px) {
+    .registries-container .counter-list .list-group-item {
+        padding: 8px 8px;
+    }
+}
