@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace SySIntegral.Core.Application.Common.Utils
 {
-   public static class DateTimeExtensions
+    public static class DateTimeExtensions
     {
         public static DateTime AbsoluteStart(this DateTime dateTime)
         {
@@ -96,6 +97,26 @@ namespace SySIntegral.Core.Application.Common.Utils
         public static string ToLongStringPattern(this DateTime date)
         {
             return date.ToString("yyyyMMddHHmmssfffffff");
+        }
+
+        public static string ElapsedTimeInWords(this DateTime date, bool returnDateForOldDates = false)
+        {
+            var today = DateTime.Today.AbsoluteStart();
+            var eventDate = date.AbsoluteStart();
+
+            if (eventDate == today) return "Hoy";
+            if (eventDate == today.AddDays(-1)) return "Ayer";
+            return returnDateForOldDates ? eventDate.ToShortDateString() : $"Hace {(eventDate.DaysBetweenDates(today))} días";
+        }
+
+        public static bool IsToday(this DateTime date)
+        {
+            return date.AbsoluteStart() == DateTime.Today.AbsoluteStart();
+        }
+
+        public static bool IsYesterday(this DateTime date)
+        {
+            return date.AbsoluteStart() == DateTime.Today.AddDays(-1).AbsoluteStart();
         }
 
     }

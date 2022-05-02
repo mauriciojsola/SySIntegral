@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SySIntegral.Core.Entities.Assets;
 using SySIntegral.Core.Entities.Organizations;
 
 namespace SySIntegral.Core.Mappings.Organizations
@@ -21,6 +22,9 @@ namespace SySIntegral.Core.Mappings.Organizations
                 .IsRequired();
 
             entity.HasKey(k => k.Id);
+
+            entity.HasMany<Asset>(x => x.Assets)
+                .WithOne(x => x.Organization).HasForeignKey(x => x.OrganizationId).IsRequired();
 
             entity.ToTable("Organization");
 

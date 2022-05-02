@@ -1,21 +1,18 @@
 ﻿@using SySIntegral.Core.Entities.Organizations
-@model SySIntegral.Web.Areas.Admin.Models.Users.CreateUserViewModel
+@model SySIntegral.Web.Areas.Admin.Models.Organizations.CreateOrganizationViewModel
 
 @{
-    ViewData["Title"] = "Editar Usuario";
-    var roles = (List<IdentityRole>)ViewData["roles"];
-    var organizations = (List<Organization>)ViewData["organizations"];
+    ViewData["Title"] = "Editar Organización";
 }
 
-<h1>Editar Usuario</h1>
+<h1>Editar Organización</h1>
 <hr />
-<div asp-validation-summary="All" class="text-danger"></div>
 <div class="row">
     <div class="col-12">
 
         <form asp-route-returnUrl="" asp-action="Update" method="post">
             
-            <partial name="_UserForm"/>
+            <partial name="_OrganizationForm"/>
 
             <button type="submit" class="btn btn-primary">Grabar</button>
         </form>

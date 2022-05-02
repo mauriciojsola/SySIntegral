@@ -69,7 +69,7 @@ namespace SySIntegral.Core.Repositories
         }
     }
 
-    public interface IRepository<T> where T : BaseEntity
+    public interface IRepository<T> : IRepository where T : BaseEntity
     {
         IQueryable<T> GetAll();
         T GetById(int id);
@@ -77,5 +77,10 @@ namespace SySIntegral.Core.Repositories
         void Update(T entity);
         void Delete(T entity);
         void Refresh(T entity);
+    }
+
+    public interface IRepository
+    {
+
     }
 }

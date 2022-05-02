@@ -31,10 +31,10 @@ namespace SySIntegral.Web
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Scoped);
 
             services.AddSySAuth(Configuration);
+            services.AddRepositories();
 
+            
             services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
-
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ApiAuthorizeFilter>();
 
             //services.Configure<SendGridEmailSenderOptions>(options =>

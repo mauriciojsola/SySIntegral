@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Entities.Users;
+using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Core.Infrastructure.Auth
 {
@@ -25,7 +28,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
                 .AddIdentity()
                 .AddUserClaimsPrincipalFactory();
 
-            var environment = services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment >();
+            var environment = services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
 
             services.AddDataProtection()
                 .SetApplicationName($"my-app-{environment.EnvironmentName}")
@@ -40,6 +43,16 @@ namespace SySIntegral.Core.Infrastructure.Auth
 
         public static IApplicationBuilder UseSySCurrentUser(this IApplicationBuilder app) =>
             app.UseMiddleware<CurrentUserMiddleware>();
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            // Generic interface and implementation.
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
+            return services;
+        }
+
 
         private static IServiceCollection AddCurrentUser(this IServiceCollection services) =>
             services
@@ -64,13 +77,12 @@ namespace SySIntegral.Core.Infrastructure.Auth
             .Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme,
                     options =>
                     {
-                        options.LoginPath = "/Identity/Account/Login"; 
+                        options.LoginPath = "/Identity/Account/Login";
                         options.LogoutPath = "/Identity/Account/Logout";
-                        options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
+                        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                         options.SlidingExpiration = true;
                         options.ExpireTimeSpan = TimeSpan.FromHours(1);
                     });
-
 
         internal static IServiceCollection AddUserClaimsPrincipalFactory(this IServiceCollection services) =>
             services.AddScoped<Microsoft.AspNetCore.Identity.IUserClaimsPrincipalFactory<ApplicationUser>, SySClaimsPrincipalFactory>();

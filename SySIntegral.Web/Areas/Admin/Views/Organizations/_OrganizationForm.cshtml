@@ -1,0 +1,23 @@
+﻿@using SySIntegral.Core.Entities.Organizations
+@model SySIntegral.Web.Areas.Admin.Models.Organizations.CreateOrganizationViewModel
+
+@{
+    ViewData["Title"] = "Administrar Organización";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<input type="hidden" asp-for="Id" />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    
+</div>
+
+
