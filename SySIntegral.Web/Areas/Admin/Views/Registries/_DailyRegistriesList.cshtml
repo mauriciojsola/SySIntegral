@@ -1,0 +1,31 @@
+﻿
+@using SySIntegral.Core.Application.Common.Utils
+@model IList<SySIntegral.Web.Areas.Admin.Controllers.DateTotal>
+
+<ul class="list-group counter-list">
+
+    @foreach (var record in Model.ToList())
+    {
+        <li class="list-group-item">
+
+            <div class="d-flex">
+                <div class="mr-auto">
+                    @record.Date.ToLocalTime().ToString("d")
+                    @if (record.Date.IsToday())
+                    {
+                        <span> (hoy)</span>
+                    }
+                    @if (record.Date.IsYesterday())
+                    {
+                        <span> (ayer)</span>
+                    }
+                </div>
+                <div class="counter-white rounded text-center">@record.Totals.WhiteEggsCount</div>
+                <div class="counter-color rounded ml-1 text-center">@record.Totals.ColorEggsCount</div>
+            </div>
+
+        </li>
+
+    }
+
+</ul>

@@ -36,6 +36,13 @@
         Refrescar
     </button>
     <hr />
+
+    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 10px 10px; border: 2px solid #ccc; width: 100%">
+        <i class="fa fa-calendar"></i>&nbsp;
+        <span></span> <i class="fa fa-caret-down"></i>
+    </div>
+
+    <hr />
     <h2>Totales Por Día</h2>
     @*<div class="table-responsive-md">
             <table class="table table-bordered table-sm">
@@ -60,35 +67,9 @@
         </div>*@
 
 
-
-    <ul class="list-group counter-list">
-
-        @foreach (var record in Model.DateTotals)
-        {
-        <li class="list-group-item">
-
-            <div class="d-flex">
-                <div class="mr-auto">
-                    @record.Date.ToString("d")
-                    @if (record.Date.IsToday())
-                    {
-                    <span> (hoy)</span>
-                    }
-                    @if (record.Date.IsYesterday())
-                    {
-                        <span> (ayer)</span>
-                    }
-                </div>
-                <div class="counter-white rounded text-center">@record.Totals.WhiteEggsCount</div>
-                <div class="counter-color rounded ml-1 text-center">@record.Totals.ColorEggsCount</div>
-            </div>
-
-        </li>
-
-        }
-
-    </ul>
-
+    <div id="dailyRegistriesContainer">
+        @Html.Partial("_DailyRegistriesList", Model.DateTotals)
+    </div>
 
     <hr />
     <h2>Registros</h2>
@@ -120,13 +101,94 @@
 </div>
 @section Scripts
 {
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>*@
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>*@
+    <script src="~/js/daterangepicker.js"></script>
+    @*<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />*@
+    <link href="~/css/daterangepicker.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" />
     <script>
         $(document).ready(function () {
             $('#RefreshPage').click(function () {
                 console.debug("refreshing");
                 window.location.reload();
             });
+
+            $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+                //console.debug("EV", ev);
+                //console.debug("PICKER", picker);
+                //console.debug("start:", picker.startDate);
+                //console.debug("end:", picker.endDate);
+                console.log("apply event fired, start/end dates are " + picker.startDate.format('YYYY-MM-DD') + " to " + picker.endDate.format('YYYY-MM-DD'));
+
+                $.post("Registries/filter", {
+                    startDate: picker.startDate.format('YYYY-MM-DD'),
+                    endDate: picker.endDate.format('YYYY-MM-DD'),
+                    }, function (data,status) {
+                    console.debug("Data: ", data, status);
+                    $('#dailyRegistriesContainer').html(data);
+                });
+            });
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                showDropdowns: true,
+                minYear: 2020,
+                maxYear: @DateTime.Now.AddYears(5).Year,
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                    'Éste Mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes Anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: "Cancelar",
+                    fromLabel: "Desde",
+                    toLabel: "Hasta",
+                    customRangeLabel: "Elegir Fecha",
+                    daysOfWeek: [
+                        "Do",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    monthNames: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Setiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                }
+            }, cb);
+
+            cb(start, end);
+
         });
     </script>
+
 
 }

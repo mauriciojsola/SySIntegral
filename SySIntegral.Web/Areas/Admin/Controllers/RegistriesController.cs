@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
 
@@ -30,19 +31,43 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             //    into dataGroup
             //    select dataGroup; //.OrderBy(eg => eg.ReadTimestamp.Value).Max();
 
-            var dateTotals = _eggRegistryRepository.GetAll().AsEnumerable().Where(x => x.ReadTimestamp != null)
-                .GroupBy(x => new {x.ReadTimestamp.Value.Year, x.ReadTimestamp.Value.Month, x.ReadTimestamp.Value.Day})
-                .Select(r => new DateTotal{ Date = new DateTime(r.Key.Year,r.Key.Month,r.Key.Day), Totals = r.OrderByDescending(x => x.ReadTimestamp).First() })
-                .OrderByDescending(x => x.Date).ToList();
+            var startDate = DateTime.Now.AddDays(-30).AbsoluteStart();
+            var endDate = DateTime.Now.AbsoluteEnd();
 
+            var dateTotals = GetRegistries(startDate, endDate);
 
             var regs = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
+
             return View(new RegistriesModel
             {
+                StartDate = startDate,
+                EndDate = endDate,
                 Registries = regs,
                 DateTotals = dateTotals,
                 TotalRecords = _eggRegistryRepository.GetAll().Count()
             });
+        }
+
+        [Route("filter")]
+        [HttpPost]
+        public IActionResult FilterRegistries(DateTime? startDate, DateTime? endDate)
+        {
+            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(-30).AbsoluteStart();
+            endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
+
+            var dateTotals = GetRegistries(startDate, endDate);
+            return PartialView("_DailyRegistriesList", dateTotals);
+        }
+
+        private List<DateTotal> GetRegistries(DateTime? startDate, DateTime? endDate)
+        {
+            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(-30).AbsoluteStart();
+            endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
+
+            return _eggRegistryRepository.GetAll().AsEnumerable().Where(x => x.ReadTimestamp != null && x.ReadTimestamp >= startDate && x.ReadTimestamp < endDate)
+                .GroupBy(x => new { x.ReadTimestamp.Value.Year, x.ReadTimestamp.Value.Month, x.ReadTimestamp.Value.Day })
+                .Select(r => new DateTotal { Date = new DateTime(r.Key.Year, r.Key.Month, r.Key.Day), Totals = r.OrderByDescending(x => x.ReadTimestamp).First() })
+                .OrderByDescending(x => x.Date).ToList();
         }
 
         public class RegistriesModel
@@ -50,13 +75,17 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             public RegistriesModel()
             {
                 Registries = new List<EggRegistry>();
+                DateTotals = new List<DateTotal>();
             }
+
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
 
             public IList<EggRegistry> Registries { get; set; }
             public int TotalRecords { get; set; }
             public IList<DateTotal> DateTotals { get; set; }
 
-            public DateTotal TodaysTotals => DateTotals.First();
+            public DateTotal TodaysTotals => DateTotals.FirstOrDefault();
         }
     }
 

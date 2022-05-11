@@ -9,12 +9,14 @@ namespace SySIntegral.Core.Application.Common.Utils
     {
         public static DateTime AbsoluteStart(this DateTime dateTime)
         {
-            return dateTime.Date;
+            return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, 0);
+            //return dateTime.Date;
         }
 
         public static DateTime AbsoluteEnd(this DateTime dateTime)
         {
-            return AbsoluteStart(dateTime).AddDays(1).AddTicks(-1);
+            return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 23, 59, 59, 999);
+            //return AbsoluteStart(dateTime).AddDays(1).AddTicks(-2);
         }
 
         /// <summary>
