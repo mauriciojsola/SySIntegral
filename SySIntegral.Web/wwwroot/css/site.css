@@ -106,13 +106,13 @@ html {
 .registries-container .counter-list .counter-color {
     border: 1px solid #d48b62;
     color: #d48b62;
-    min-width: 75px;
+    min-width: 80px;
 }
 
 .registries-container .counter-list .counter-white {
     color: #666666;
     border: 1px solid #666666;
-    min-width: 75px;
+    min-width: 80px;
 }
 
 .registries-container .counter-list .list-group-item {

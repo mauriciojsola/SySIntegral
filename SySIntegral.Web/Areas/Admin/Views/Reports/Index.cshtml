@@ -7,31 +7,72 @@
     </div>
 </div>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc/chartjs-plugin-datalabels.min.js" integrity="sha512-5L00nKlyvEYuI4nju08bVuNEJEU8HbmG8fDGFbzt1HeZcgmBV5EuZz+HJ9au/6Ixvjddun6ZNwkRcclIlyviXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
     const labels = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+
     ];
 
     const data = {
         labels: labels,
         datasets: [{
-            label: 'Datos Aleatorios',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [0, 10, 5, 2, 20, 30, 45],
+            label: 'Conteos 2022',
+            datalabels: {
+                color: '#444444',
+                anchor: 'end',
+                align: 'start',
+                offset: 10,
+                formatter: function (value, context) {
+                    let formatter = new Intl.NumberFormat('es-AR', {});
+                    return formatter.format(value); //Number((value).toFixed(0)).toLocaleString();
+                }
+            },
+            backgroundColor: '#d9d2e9',
+            borderColor: [
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                'blue',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                'red',
+                
+            ],
+            borderWidth: 1,
+            data: [120254, 135247, 100002, 189665, 156569, 110250, 201230, 145000, 147747,115000,197582, 98758],
         }]
     };
 
     const config = {
-        type: 'line',
+        type: 'bar',
         data: data,
-        options: {}
+        plugins: [ChartDataLabels],
+        options: {
+            scaleShowValues: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     };
 
 
@@ -40,4 +81,8 @@
       document.getElementById('myChart'),
       config
     );
+    
+  
+    
+
     </script>

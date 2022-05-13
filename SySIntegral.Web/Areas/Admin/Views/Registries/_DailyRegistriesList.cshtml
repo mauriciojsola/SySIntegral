@@ -10,7 +10,7 @@
 
             <div class="d-flex">
                 <div class="mr-auto">
-                    @record.Date.ToLocalTime().ToString("d")
+                    @record.Date.ToString("d")
                     @if (record.Date.IsToday())
                     {
                         <span> (hoy)</span>
@@ -20,12 +20,23 @@
                         <span> (ayer)</span>
                     }
                 </div>
-                <div class="counter-white rounded text-center">@record.Totals.WhiteEggsCount</div>
-                <div class="counter-color rounded ml-1 text-center">@record.Totals.ColorEggsCount</div>
+                <div class="counter-white rounded text-center">@record.Totals.WhiteEggsCount.ToString("N0")</div>
+                <div class="counter-color rounded ml-1 text-center">@record.Totals.ColorEggsCount.ToString("N0")</div>
             </div>
 
         </li>
-
     }
+    
+    <li class="list-group-item">
+
+        <div class="d-flex">
+            <div class="mr-auto">
+                <h2>TOTAL</h2>
+            </div>
+            <div class="counter-white rounded text-center d-flex align-items-center justify-content-center"><strong>@Model.Sum(x => x.Totals.WhiteEggsCount).ToString("N0")</strong></div>
+            <div class="counter-color rounded ml-1 text-center d-flex align-items-center justify-content-center"><strong>@Model.Sum(x => x.Totals.ColorEggsCount).ToString("N0")</strong></div>
+        </div>
+
+    </li>
 
 </ul>
