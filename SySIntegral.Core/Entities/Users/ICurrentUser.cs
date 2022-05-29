@@ -10,9 +10,10 @@ namespace SySIntegral.Core.Entities.Users
         string Name { get; }
         Guid GetUserId();
         string GetUserEmail();
-        string GetOrganizationId();
+        int GetOrganizationId();
         bool IsAuthenticated();
         bool IsInRole(string role);
+        bool IsLimitedByOrganization();
         IEnumerable<Claim> GetUserClaims();
     }
 }

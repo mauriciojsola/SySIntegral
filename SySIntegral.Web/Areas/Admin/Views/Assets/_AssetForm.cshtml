@@ -1,0 +1,33 @@
+﻿@model SySIntegral.Web.Areas.Admin.Models.Assets.CreateAssetViewModel
+
+@{
+    ViewData["Title"] = "Administrar Instalación";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<input type="hidden" asp-for="Id" />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <select class="form-control" asp-for="SelectedOrganizationId" asp-items="@(new SelectList(Model.Organizations, "Id", "Name"))">
+                <option value="">-- Seleccione Organización--</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+

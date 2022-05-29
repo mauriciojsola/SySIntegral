@@ -10,13 +10,15 @@ namespace SySIntegral.Core.Repositories
 {
     public class GenericRepository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _entities;
         string errorMessage = string.Empty;
 
+        protected ApplicationDbContext DBContext => _context;
+
         public GenericRepository(ApplicationDbContext context)
         {
-            this.context = context;
+            _context = context;
             _entities = context.Set<T>();
         }
 
@@ -37,7 +39,7 @@ namespace SySIntegral.Core.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
             _entities.Add(entity);
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         public void Update(T entity)
@@ -46,7 +48,7 @@ namespace SySIntegral.Core.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         public void Delete(T entity)
@@ -56,7 +58,7 @@ namespace SySIntegral.Core.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
             _entities.Remove(entity);
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         public void Refresh(T entity)
@@ -65,7 +67,7 @@ namespace SySIntegral.Core.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-            context.Entry(entity).Reload();
+            _context.Entry(entity).Reload();
         }
     }
 

@@ -14,8 +14,8 @@ namespace SySIntegral.Core.Entities.Assets
         }
 
         public int OrganizationId { get; set; }
-        public Organization Organization { get; set; }
+        public virtual Organization Organization { get; set; }
         public string Name { get; set; }
-        public ICollection<Device> Devices { get; set; }
+        public virtual ICollection<Device> Devices { get; set; }
     }
 }

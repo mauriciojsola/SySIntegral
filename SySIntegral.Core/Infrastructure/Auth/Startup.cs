@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Entities.Users;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Assets;
+using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Core.Infrastructure.Auth
@@ -49,6 +51,8 @@ namespace SySIntegral.Core.Infrastructure.Auth
             // Generic interface and implementation.
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IAssetRepository, AssetRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
 
             return services;
         }

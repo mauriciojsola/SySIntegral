@@ -10,8 +10,8 @@ namespace SySIntegral.Core.Infrastructure.Auth
         public static string GetEmail(this ClaimsPrincipal principal)
             => principal.FindFirstValue(ClaimTypes.Email);
 
-        public static string GetOrganizationId(this ClaimsPrincipal principal)
-            => principal.FindFirstValue(SySClaims.OrganizationId);
+        public static int GetOrganizationId(this ClaimsPrincipal principal)
+            => Convert.ToInt32(principal.FindFirstValue(SySClaims.OrganizationId) ?? "0") ;
 
         public static string GetFullName(this ClaimsPrincipal principal)
             => principal?.FindFirst(SySClaims.Fullname)?.Value;

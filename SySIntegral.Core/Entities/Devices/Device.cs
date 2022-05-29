@@ -8,7 +8,7 @@ namespace SySIntegral.Core.Entities.Devices
     public class Device : BaseEntity
     {
         public int AssetId { get; set; }
-        public Asset Asset { get; set; }
+        public virtual Asset Asset { get; set; }
         public string Description { get; set; }
         public string UniqueId { get; set; }
     }

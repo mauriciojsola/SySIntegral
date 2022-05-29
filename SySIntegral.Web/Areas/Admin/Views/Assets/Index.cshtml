@@ -1,0 +1,49 @@
+﻿@model List<SySIntegral.Core.Entities.Assets.Asset>
+@{
+    ViewData["Title"] = "Instalaciones";
+}
+
+<h1>Instalaciones</h1>
+<a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Assets" asp-action="Create">Crear Instalación</a>
+
+<div class="table-responsive-md mt-2">
+    <table class="table table-striped table-bordered table-sm">
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Nombre</td>
+                <td>Dispositivos</td>
+                <td>Organización</td>
+                <td></td>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var asset in Model)
+            {
+                <tr>
+                    <td>@asset.Id</td>
+                    <td>@asset.Name</td>
+                    <td>
+                        <span class="badge badge-primary badge-pill">@asset.Devices.Count</span>&nbsp;
+                        @if (asset.Devices.Any())
+                        {
+                            <span>(@string.Join(", ", asset.Devices.Select(x => x.Description.Trim())))</span>
+                        }
+                    </td>
+                    <td>@asset.Organization.Name</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" style="display: inline-block" asp-area="Admin" asp-controller="Assets" asp-action="Edit" asp-route-id="@asset.Id">
+                            Editar
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@asset.Id" method="post" style="display: inline-block">
+                            <button type="submit" onclick="return confirm('Confirma borrar ésta Instalación?')" class="btn btn-sm btn-danger" @(asset.Devices.Any() ? "disabled" : "") title="@(asset.Devices.Any() ? "No se puede borrar una Instalación que tiene dispositivos activos" : "")" style="display: inline-block">
+                                Borrar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

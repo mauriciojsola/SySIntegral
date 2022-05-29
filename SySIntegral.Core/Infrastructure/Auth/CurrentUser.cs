@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
+using SySIntegral.Core.Entities.Roles;
 using SySIntegral.Core.Entities.Users;
 
 namespace SySIntegral.Core.Infrastructure.Auth
@@ -30,11 +31,13 @@ namespace SySIntegral.Core.Infrastructure.Auth
         public bool IsInRole(string role) =>
             _user?.IsInRole(role) is true;
 
+        public bool IsLimitedByOrganization() => !IsInRole(SySRoles.Administrator);
+
         public IEnumerable<Claim> GetUserClaims() =>
             _user?.Claims;
 
-        public string GetOrganizationId() =>
-            IsAuthenticated() ? _user?.GetOrganizationId() : string.Empty;
+        public int GetOrganizationId() =>
+            IsAuthenticated() && _user != null ? _user.GetOrganizationId() : 0;
 
         public void SetCurrentUser(ClaimsPrincipal user)
         {

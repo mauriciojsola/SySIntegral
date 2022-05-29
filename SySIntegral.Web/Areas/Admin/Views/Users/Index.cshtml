@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SySIntegral.Core.Entities.Users.ApplicationUser>
+﻿@model IEnumerable<SySIntegral.Web.Areas.Admin.Models.Users.UserDisplayViewModel>
 @{
     ViewData["Title"] = "Usuarios";
 }
@@ -14,6 +14,7 @@
                 <td>Nombre</td>
                 <td>Email</td>
                 <td>Organización</td>
+                <td>Roles</td>
             </tr>
         </thead>
         <tbody>
@@ -23,7 +24,8 @@
                     <td>@user.Id</td>
                     <td>@user.FirstName @user.LastName</td>
                     <td>@user.Email</td>
-                    <td>@user.Organization.Name</td>
+                    <td>@user.Organization</td>
+                    <td>@(string.Join(", ", user.Roles))</td>
                     <td>
                         <a class="btn btn-sm btn-primary" aria-controlsstyle="display: inline-block" asp-area="Admin" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">
                             Editar

@@ -20,12 +20,12 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Route("Admin/[Controller]")]
     [Area("Admin")]
     [Authorize]
-    public class OrganizationsController : SySIntegralBaseController
+    public class DevicesController : SySIntegralBaseController
     {
         private readonly IOrganizationRepository _organizationRepository;
-        private readonly ILogger<OrganizationsController> _logger;
+        private readonly ILogger<DevicesController> _logger;
 
-        public OrganizationsController(IOrganizationRepository organizationRepository, ILogger<OrganizationsController> logger)
+        public DevicesController(IOrganizationRepository organizationRepository, ILogger<DevicesController> logger)
         {
             _logger = logger;
             _organizationRepository = organizationRepository;
@@ -48,11 +48,11 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             return View(new CreateOrganizationViewModel());
         }
 
-        [Route("{id}/Edit")]
+        [Route("Edit")]
         public IActionResult Edit(int id)
         {
             if (IsLimitedByOrganization && id != OrganizationId)
-                return Unauthorized("Usted no está autorizado a editar ésta Organización");
+                return Unauthorized("Usted no está autorizado a editar esa Organización");
 
             InitModel();
 
@@ -149,7 +149,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("{id}/Delete")]
+        [Route("Delete")]
         public IActionResult Delete(int id)
         {
             if (IsLimitedByOrganization && id != OrganizationId)
@@ -166,7 +166,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 }
                 else
                     ModelState.AddModelError("", "Organización no encontrada");
-                
+                return View("Index");
             }
             catch (Exception ex)
             {

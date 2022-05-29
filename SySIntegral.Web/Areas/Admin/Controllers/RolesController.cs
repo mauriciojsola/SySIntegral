@@ -11,7 +11,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Route("Admin/[Controller]")]
     [Area("Admin")]
     [Authorize(Roles = "Administrador")]
-    public class RolesController : Controller
+    public class RolesController : SySIntegralBaseController
     {
         RoleManager<IdentityRole> roleManager;
 

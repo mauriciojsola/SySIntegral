@@ -40,4 +40,8 @@
     <ProjectReference Include="..\SySIntegral.Core\SySIntegral.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Models\Devices\" />
+  </ItemGroup>
+
 </Project>

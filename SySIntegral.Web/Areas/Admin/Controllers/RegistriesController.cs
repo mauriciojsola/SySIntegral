@@ -13,9 +13,10 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Route("Admin/[Controller]")]
     [Area("Admin")]
     [Authorize]
-    public class RegistriesController : Controller
+    public class RegistriesController : SySIntegralBaseController
     {
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
+        private const int ReportDays = -6;
 
         public RegistriesController(IRepository<EggRegistry> eggRegistryRepository)
         {
@@ -31,7 +32,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             //    into dataGroup
             //    select dataGroup; //.OrderBy(eg => eg.ReadTimestamp.Value).Max();
 
-            var startDate = DateTime.Now.AddDays(-30).AbsoluteStart();
+            var startDate = DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             var endDate = DateTime.Now.AbsoluteEnd();
 
             var dateTotals = GetRegistries(startDate, endDate);
@@ -52,7 +53,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult FilterRegistries(DateTime? startDate, DateTime? endDate)
         {
-            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(-30).AbsoluteStart();
+            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
 
             var dateTotals = GetRegistries(startDate, endDate);
@@ -61,7 +62,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
         private List<DateTotal> GetRegistries(DateTime? startDate, DateTime? endDate)
         {
-            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(-30).AbsoluteStart();
+            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
 
             return _eggRegistryRepository.GetAll().AsEnumerable().Where(x => x.ReadTimestamp != null && x.ReadTimestamp >= startDate && x.ReadTimestamp < endDate)

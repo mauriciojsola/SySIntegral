@@ -13,7 +13,8 @@
 
 <div class="form-group">
     <label asp-for="OrganizationId"></label>
-    <select asp-for="OrganizationId" class="form-control" asp-items='new SelectList(organizations,"Id","Name")'>
+    <select asp-for="OrganizationId" class="form-control" asp-items='new SelectList(organizations, "Id", "Name")'>
+        <option value="">-- Seleccione Organización--</option>
     </select>
     <span asp-validation-for="OrganizationId" class="text-danger"></span>
 </div>

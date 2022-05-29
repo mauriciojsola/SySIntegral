@@ -4,7 +4,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Asset](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nchar](100) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
 	[OrganizationId] [int] NOT NULL,
  CONSTRAINT [PK_Asset] PRIMARY KEY CLUSTERED 
 (
@@ -19,8 +19,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Device](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UniqueId] [nchar](100) NOT NULL,
-	[Description] [nchar](250) NOT NULL,
+	[UniqueId] [nvarchar](100) NOT NULL,
+	[Description] [nvarchar](250) NOT NULL,
 	[AssetId] [int] NOT NULL,
  CONSTRAINT [PK_Device] PRIMARY KEY CLUSTERED 
 (

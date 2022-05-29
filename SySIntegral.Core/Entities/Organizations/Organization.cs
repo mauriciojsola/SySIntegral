@@ -13,6 +13,6 @@ namespace SySIntegral.Core.Entities.Organizations
         }
 
         public string Name { get; set; }
-        public ICollection<Asset> Assets { get; set; }
+        public virtual ICollection<Asset> Assets { get; set; }
     }
 }

@@ -13,3 +13,12 @@
     <a class="mt-5 btn btn-lg btn-primary" asp-area="Admin" asp-controller="Registries" asp-action="Index" >Ver Registros</a>
 </div>
 
+<ul>
+    <li>Name: @currentUser.Name</li>
+    <li>Organization ID: @currentUser.GetOrganizationId()</li>
+    <li>Is Limited By Organization ID: @currentUser.IsLimitedByOrganization()</li>
+    <li>Email: @currentUser.GetUserEmail()</li>
+    <li>User Id: @currentUser.GetUserId()</li>
+    <li>Authenticated?: @currentUser.IsAuthenticated()</li>
+</ul>
+

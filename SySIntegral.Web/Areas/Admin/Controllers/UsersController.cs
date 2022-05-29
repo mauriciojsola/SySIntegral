@@ -17,7 +17,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Route("Admin/[Controller]")]
     [Area("Admin")]
     [Authorize]
-    public class UsersController : Controller
+    public class UsersController : SySIntegralBaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -39,8 +39,32 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            var users = _userManager.Users.Include(x => x.Organization).OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList();
+            var users = GetUsers();
             return View(users);
+        }
+
+        private IList<UserDisplayViewModel> GetUsers()
+        {
+            var result = new List<UserDisplayViewModel>();
+            var users = IsLimitedByOrganization ? _userManager.Users.Where(x => x.Organization.Id == OrganizationId) : _userManager.Users;
+            users = users.Include(x => x.Organization).OrderBy(x => x.Organization.Name).ThenBy(x => x.LastName).ThenBy(x => x.FirstName);
+
+            foreach (var user in users.ToList())
+            {
+                var roles = _userManager.GetRolesAsync(user).Result;
+
+                result.Add(new UserDisplayViewModel
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Organization = user.Organization.Name,
+                    Roles = roles
+                });
+            }
+
+            return result;
         }
 
         [Route("Create")]
@@ -171,7 +195,9 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         private void InitModel()
         {
             ViewData["roles"] = _roleManager.Roles.ToList();
-            ViewData["organizations"] = _organizationRepository.GetAll().ToList();
+            ViewData["organizations"] = IsLimitedByOrganization
+                    ? _organizationRepository.GetAll().Where(x => x.Id == OrganizationId).OrderBy(x => x.Name).ToList()
+                    : _organizationRepository.GetAll().OrderBy(x => x.Name).ToList();
         }
 
         private List<string> ValidateModel(CreateUserViewModel model)

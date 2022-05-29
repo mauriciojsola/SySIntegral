@@ -15,7 +15,7 @@ namespace SySIntegral.Core.Entities.Users
 
         //public ICollection<IdentityRole> Roles { get; set; }
 
-        public Organization Organization { get; set; }
+        public virtual Organization Organization { get; set; }
 
         public int OrganizationId { get; set; }
 

@@ -38,25 +38,45 @@
                         @*<li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
                             </li>*@
-                        
-                        @if (SignInManager.IsSignedIn(User) && User.IsInRole(SySRoles.Administrator))
+
+                        @{
+                            var isSignedIn = SignInManager.IsSignedIn(User);
+                            var isAdmin = User.IsInRole(SySRoles.Administrator);
+                        }
+
+                        @if (isSignedIn)
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Administrar
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+
+                                    @if (isAdmin)
+                                    {
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                                    }
+
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
+
+                                    @if (isAdmin)
+                                    {
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
+                                    }
+
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Assets" asp-action="Index">Instalaciones</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Devices" asp-action="Index">Dispositivos</a>
+
                                     <div class="dropdown-divider"></div>
+
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Registries" asp-action="Index">Registros</a>
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reportes</a>
+
                                     @*<div class="dropdown-divider"></div>*@
                                 </div>
                             </li>
-                        }
 
+                        }
 
                     </ul>
                 </div>

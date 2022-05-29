@@ -9,7 +9,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Route("Admin/[Controller]")]
     [Area("Admin")]
     [Authorize]
-    public class ReportsController : Controller
+    public class ReportsController : SySIntegralBaseController
     {
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
 
