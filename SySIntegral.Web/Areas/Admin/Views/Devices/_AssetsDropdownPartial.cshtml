@@ -1,0 +1,8 @@
+﻿@model SySIntegral.Web.Areas.Admin.Models.Devices.CreateDeviceViewModel
+
+
+<label asp-for="SelectedAssetId"></label>
+<select class="form-control" asp-for="SelectedAssetId" asp-items="@(new SelectList(Model.Assets, "Id", "Name"))">
+    <option value="">-- Seleccione Instalación --</option>
+</select>
+<span asp-validation-for="SelectedAssetId" class="text-danger"></span>

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Infrastructure.Auth;
 using SySIntegral.Core.Repositories;
@@ -62,6 +63,17 @@ namespace SySIntegral.Web
                 .AddRazorRuntimeCompilation()
                 .AddSessionStateTempDataProvider();
             services.AddRazorPages();
+
+            //services.AddLogging(loggingBuilder =>
+            //{
+            //    loggingBuilder.AddFile("app.log", append: true);
+            //});
+
+            services.AddLogging(loggingBuilder =>
+            {
+                var loggingSection = Configuration.GetSection("Logging");
+                loggingBuilder.AddFile(loggingSection);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

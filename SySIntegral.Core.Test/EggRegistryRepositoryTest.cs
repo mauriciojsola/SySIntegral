@@ -7,6 +7,7 @@ using SySIntegral.Core.Data;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Entities.Organizations;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Core.Repositories.Organizations;
 
@@ -29,9 +30,11 @@ namespace SySIntegral.Core.Test
             using (var context = new ApplicationDbContext(options))
             {
                 var repo = new EggRegistryRepository(context);
+                var devices = new DeviceRepository(context);
+
                 repo.Insert(new EggRegistry
                 {
-                    DeviceId = Guid.NewGuid().ToString(),
+                    DeviceId = 1,
                     Timestamp = DateTime.Today,
                     WhiteEggsCount = 1500,
                     //ColorEggsCount = 689

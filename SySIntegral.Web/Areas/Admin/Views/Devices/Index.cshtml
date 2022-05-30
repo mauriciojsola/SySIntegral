@@ -4,14 +4,15 @@
 }
 
 <h1>Dispositivos</h1>
+<hr />
 <a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Devices" asp-action="Create">Crear Dispositivo</a>
 
 <div class="table-responsive-md mt-2">
     <table class="table table-striped table-bordered table-sm">
         <thead>
             <tr>
+                <td>Descripción</td>
                 <td>Id</td>
-                <td>Nombre</td>
                 <td>Instalación</td>
                 <td>Organización</td>
 
@@ -21,22 +22,32 @@
             @foreach (var device in Model)
             {
             <tr>
-                <td>@device.Id</td>
-                <td>@device.Description</td>
-                <td>@device.Asset.Name</td>
+                <td><a asp-controller="Devices" asp-area="Admin" asp-action="Edit" asp-route-id="@device.Id">@device.Description</a></td>
+                <td>@device.UniqueId</td>
+
+                <td>
+                    <a asp-controller="Assets" asp-area="Admin" asp-action="Edit" asp-route-id="@device.Asset.Id">@device.Asset.Name</a>
+                </td>
                 <td>@device.Asset.Organization.Name</td>
                 <td>
                     <a class="btn btn-sm btn-primary" style="display: inline-block" asp-area="Admin" asp-controller="Devices" asp-action="Edit" asp-route-id="@device.Id">
                         Editar
                     </a>
-                    @*<form asp-action="Delete" asp-route-id="@device.Id" method="post" style="display: inline-block">
-                        <button type="submit" onclick="return confirm('Confirma borrar ésta Organización?')" class="btn btn-sm btn-danger" @(device.Assets.Any() ? "disabled" : "") title="@(device.Assets.Any() ? "No se puede borrar una Organización que tiene instalaciones activas" : "")" style="display: inline-block">
+                    <form asp-action="Delete" asp-route-id="@device.Id" method="post" style="display: inline-block">
+                        <button type="submit" onclick="return confirm('Confirma borrar éste Dispositivo?')" class="btn btn-sm btn-danger" style="display: inline-block">
                             Borrar
                         </button>
-                    </form>*@
+                    </form>
                 </td>
             </tr>
             }
         </tbody>
     </table>
 </div>
+
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No se encontraron dispositivos.</div>
+}
+

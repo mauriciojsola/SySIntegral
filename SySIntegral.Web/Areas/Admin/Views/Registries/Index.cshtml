@@ -88,7 +88,8 @@
                 @foreach (var record in Model.Registries)
                 {
                 <tr>
-                    <td>@record.DeviceId</td>
+                    <td style="font-size: 12px;"><div>@record.Device.UniqueId</div>
+                        <div>(@record.Device.Description)</div></td>
                     <td>@record.WhiteEggsCount</td>
                     <td>@record.ColorEggsCount</td>
                     <td>@(record.ReadTimestamp.HasValue ? record.ReadTimestamp.Value.ToString("g") : "VACÍO")</td>

@@ -1,0 +1,8 @@
+﻿
+<script>
+    $(document).ready(function () {
+        $('#SelectedOrganizationId').off('change').on('change', function () {
+            $('#assetsListContainer').load('@Url.Action("GetAssetsPerOrganization","Devices")', { organizationId: $(this).val()});
+        });
+    });
+</script>

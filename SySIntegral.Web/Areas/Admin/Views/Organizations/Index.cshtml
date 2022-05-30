@@ -4,6 +4,7 @@
 }
 
 <h1>Organizaciones</h1>
+<hr />
 <a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Organizations" asp-action="Create">Crear Organización</a>
 
 <div class="table-responsive-md mt-2">
@@ -22,7 +23,9 @@
             {
                 <tr>
                     <td>@org.Id</td>
-                    <td>@org.Name</td>
+                    <td>
+                        <a asp-controller="Organizations" asp-area="Admin" asp-action="Edit" asp-route-id="@org.Id">@org.Name</a>
+                    </td>
                     <td>
                         <span class="badge badge-primary badge-pill">@org.Assets.Count</span>&nbsp;
                         @if (@org.Assets.Any())

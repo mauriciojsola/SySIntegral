@@ -1,0 +1,41 @@
+﻿@model List<SySIntegral.Core.Entities.Assets.Asset>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h3>Instalaciones</h3>
+<div class="table-responsive-md mt-2">
+    <table class="table table-striped table-bordered table-sm">
+        <thead>
+            <tr>
+                <td>Nombre</td>
+                <td>Dispositivos</td>
+                <td>Organización</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var asset in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Assets" asp-area="Admin" asp-action="Edit" asp-route-id="@asset.Id">@asset.Name</a>
+                    </td>
+                    <td>
+                        <span class="badge badge-primary badge-pill">@asset.Devices.Count</span>&nbsp;
+                        @if (asset.Devices.Any())
+                        {
+                            <span>(@string.Join(", ", asset.Devices.Select(x => x.Description.Trim())))</span>
+                        }
+                    </td>
+                    <td>
+                        @asset.Organization.Name
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No se encontraron Instalaciones.</div>
+}

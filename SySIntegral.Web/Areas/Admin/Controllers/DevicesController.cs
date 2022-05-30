@@ -105,6 +105,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 if (device != null)
                 {
                     device.Description = model.Description.Trim();
+                    device.UniqueId = model.UniqueId;
                     device.Asset = _assetRepository.GetById(model.SelectedAssetId);
 
                     if (model.Id > 0)
@@ -134,11 +135,13 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetAssets")]
-        public JsonResult GetAssetsPerOrganization(int organizationId)
+        public IActionResult GetAssetsPerOrganization(int organizationId)
         {
-            return Json(new { });
+            var model = new CreateDeviceViewModel { SelectedOrganizationId = organizationId };
+            model.Assets = _assetRepository.GetByOrganization(model.SelectedOrganizationId).OrderBy(x => x.Name).ToList();
+            return PartialView("_AssetsDropdownPartial", model);
         }
 
         private void InitModel(CreateDeviceViewModel model)
@@ -149,6 +152,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
             if (IsLimitedByOrganization)
                 model.SelectedOrganizationId = OrganizationId;
+            model.Assets = _assetRepository.GetByOrganization(model.SelectedOrganizationId).OrderBy(x => x.Name).ToList();
 
             model.IsLimitedByOrganization = IsLimitedByOrganization;
         }
@@ -187,14 +191,14 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         {
             try
             {
-                var asset = _assetRepository.GetById(id);
+                var device = _deviceRepository.GetById(id);
 
-                if (asset != null)
+                if (device != null)
                 {
-                    if (IsLimitedByOrganization && asset.Organization.Id != OrganizationId)
+                    if (IsLimitedByOrganization && device.Asset.Organization.Id != OrganizationId)
                         return Unauthorized("Usted no está autorizado a eliminar éste Dispositivo");
 
-                    _assetRepository.Delete(asset);
+                    _deviceRepository.Delete(device);
                 }
                 else
                     AddErrors("Dispositivo no encontrada");

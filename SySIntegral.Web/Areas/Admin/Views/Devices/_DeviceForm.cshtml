@@ -46,16 +46,15 @@
     </div>
 </div>
 
+
 <div class="row">
     <div class="col-sm-12">
-        <div class="form-group">
-            <label asp-for="SelectedAssetId"></label>
-            <select class="form-control" asp-for="SelectedAssetId" asp-items="@(new SelectList(Model.Assets, "Id", "Name"))">
-                <option value="">-- Seleccione Instalación --</option>
-            </select>
-            <span asp-validation-for="SelectedAssetId" class="text-danger"></span>
+        <div id="assetsListContainer" class="form-group">
+            <partial model="@Model" name="_AssetsDropdownPartial" />
         </div>
     </div>
 </div>
+
+
 
 

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SySIntegral.Core.Entities.Devices;
 using SySIntegral.Core.Entities.EggsRegistry;
 
 namespace SySIntegral.Core.Mappings.EggsRegistry
@@ -15,11 +16,18 @@ namespace SySIntegral.Core.Mappings.EggsRegistry
             
             entity.HasKey(k => k.Id);
 
-            entity.Property(p => p.DeviceId)
-                .HasColumnName("DeviceId")
-                .HasColumnType("nvarchar(100)")
-                .HasMaxLength(100)
+            //entity.Property(p => p.OldDeviceId)
+            //    .HasColumnName("OldDeviceId")
+            //    .HasColumnType("nvarchar(100)")
+            //    .HasMaxLength(100)
+            //    .IsRequired();
+
+            entity.Property(u => u.DeviceId)
+                .HasColumnType("int")
                 .IsRequired();
+
+            entity.HasIndex(u => u.DeviceId)
+                .HasName("IX_DeviceId");
 
             entity.Property(p => p.Timestamp)
                 .HasColumnType("datetime2")
@@ -38,6 +46,8 @@ namespace SySIntegral.Core.Mappings.EggsRegistry
 
             entity.Property(p => p.ExportTimestamp)
                 .HasColumnType("datetime2");
+
+            entity.HasOne<Device>(x => x.Device);
 
             entity.ToTable("EggRegistry");
             

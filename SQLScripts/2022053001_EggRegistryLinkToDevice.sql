@@ -1,0 +1,32 @@
+
+
+sp_rename 'EggRegistry.DeviceId', 'OldDeviceId', 'COLUMN';
+GO
+
+ALTER TABLE EggRegistry ADD DeviceId INT NULL;
+GO
+
+UPDATE EggRegistry
+SET	DeviceId = d.Id FROM Device AS d INNER JOIN EggRegistry AS er ON er.OldDeviceId=d.UniqueId
+GO
+
+
+ALTER TABLE EggRegistry ALTER COLUMN DeviceId INT NOT NULL;
+GO
+
+ALTER TABLE EggRegistry  WITH CHECK ADD  CONSTRAINT [FK_EggRegistry_Device] FOREIGN KEY([DeviceId])
+REFERENCES [Device] ([Id])
+GO
+
+ALTER TABLE [EggRegistry] CHECK CONSTRAINT [FK_EggRegistry_Device]
+GO
+
+CREATE NONCLUSTERED INDEX [IX_DeviceId] ON [EggRegistry]
+(
+	[DeviceId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+ALTER TABLE EggRegistry
+  DROP COLUMN OldDeviceId;
+GO

@@ -1,0 +1,34 @@
+﻿@model List<SySIntegral.Core.Entities.Devices.Device>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h3>Dispositivos</h3>
+
+<div class="table-responsive-md mt-2">
+    <table class="table table-striped table-bordered table-sm">
+        <thead>
+            <tr>
+                <td>Descripción</td>
+                <td>Id</td>
+                <td>Instalación</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var device in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Devices" asp-area="Admin" asp-action="Edit" asp-route-id="@device.Id">@device.Description</a>
+                    </td>
+                    <td>@device.UniqueId</td>
+                    <td>@device.Asset.Name
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No se encontraron dispositivos.</div>
+}

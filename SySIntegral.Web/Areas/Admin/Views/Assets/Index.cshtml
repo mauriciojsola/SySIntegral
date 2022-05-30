@@ -4,6 +4,7 @@
 }
 
 <h1>Instalaciones</h1>
+<hr/>
 <a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Assets" asp-action="Create">Crear Instalación</a>
 
 <div class="table-responsive-md mt-2">
@@ -23,7 +24,7 @@
             {
                 <tr>
                     <td>@asset.Id</td>
-                    <td>@asset.Name</td>
+                    <td><a asp-controller="Assets" asp-area="Admin" asp-action="Edit" asp-route-id="@asset.Id">@asset.Name</a></td>
                     <td>
                         <span class="badge badge-primary badge-pill">@asset.Devices.Count</span>&nbsp;
                         @if (asset.Devices.Any())
@@ -31,7 +32,9 @@
                             <span>(@string.Join(", ", asset.Devices.Select(x => x.Description.Trim())))</span>
                         }
                     </td>
-                    <td>@asset.Organization.Name</td>
+                    <td>
+                        <a asp-controller="Organizations" asp-area="Admin" asp-action="Edit" asp-route-id="@asset.Organization.Id">@asset.Organization.Name</a>
+                    </td>
                     <td>
                         <a class="btn btn-sm btn-primary" style="display: inline-block" asp-area="Admin" asp-controller="Assets" asp-action="Edit" asp-route-id="@asset.Id">
                             Editar
@@ -47,3 +50,10 @@
         </tbody>
     </table>
 </div>
+
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No se encontraron Instalaciones.</div>
+}
+

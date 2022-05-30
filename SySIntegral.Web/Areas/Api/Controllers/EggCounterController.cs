@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Web.Common.Filters;
 
@@ -19,11 +20,13 @@ namespace SySIntegral.Web.Areas.Api.Controllers
     {
         private readonly ILogger<EggCounterController> _logger;
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
+        private readonly IDeviceRepository _deviceRepository;
 
-        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository)
+        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository, IDeviceRepository deviceRepository)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
+            _deviceRepository = deviceRepository;
         }
 
         [HttpGet]
@@ -47,9 +50,13 @@ namespace SySIntegral.Web.Areas.Api.Controllers
 
             if (!readTimestamp.HasValue) return BadRequest($"La fecha de lectura tiene formato incorrecto. Debe ser YYYYMMDDHHMMSS.");
 
+            var device = _deviceRepository.GetByUniqueID(data.DeviceId);
+            if (device == null) return BadRequest($"No existe un dispositivo registrado con ID {data.DeviceId}.");
+
             var reg = new EggRegistry
             {
-                DeviceId = data.DeviceId,
+                //OldDeviceId = data.DeviceId,
+                Device = device,
                 Timestamp = DateTime.Now,
                 WhiteEggsCount = data.WhiteEggsCount.GetValueOrDefault(0),
                 ColorEggsCount = data.ColorEggsCount.GetValueOrDefault(0),

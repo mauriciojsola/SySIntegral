@@ -10,8 +10,8 @@
     <div class="col-12">
 
         <form asp-route-returnUrl="" asp-action="Update" method="post">
-            
-            <partial name="_AssetForm"/>
+
+            <partial name="_AssetForm" />
 
             <button type="submit" class="btn btn-primary">Grabar</button>
         </form>
@@ -20,6 +20,12 @@
 <div class="mt-2">
     <a asp-action="Index">Volver a la lista</a>
 </div>
+
+<hr />
+
+@await Component.InvokeAsync("DevicesList", Model.Id)
+
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
