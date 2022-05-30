@@ -32,7 +32,7 @@ namespace SySIntegral.Core.Services.Messaging
                 using (var message = new MailMessage())
                 {
                     message.To.Add(toEmailAddress);
-                    message.From = new MailAddress(_configuration["ExternalProviders:SendGrid:SenderEmail"]);
+                    message.From = new MailAddress(_configuration["MailClientSettings:SenderEmail"],_configuration["MailClientSettings:SenderName"]);
 
                     message.Subject = emailSubject;
                     message.Body = emailMessage;

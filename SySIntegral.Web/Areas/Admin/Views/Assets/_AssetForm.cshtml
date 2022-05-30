@@ -23,9 +23,19 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="form-group">
-            <select class="form-control" asp-for="SelectedOrganizationId" asp-items="@(new SelectList(Model.Organizations, "Id", "Name"))">
-                <option value="">-- Seleccione Organización--</option>
-            </select>
+            <label asp-for="SelectedOrganizationId"></label>
+            @if (!Model.IsLimitedByOrganization)
+            {
+                <select class="form-control" asp-for="SelectedOrganizationId" asp-items="@(new SelectList(Model.Organizations, "Id", "Name"))">
+                    <option value="">-- Seleccione Organización --</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="SelectedOrganizationId" asp-items="@(new SelectList(Model.Organizations, "Id", "Name"))" readonly>
+                </select>
+            }
+            <span asp-validation-for="SelectedOrganizationId" class="text-danger"></span>
         </div>
     </div>
 </div>

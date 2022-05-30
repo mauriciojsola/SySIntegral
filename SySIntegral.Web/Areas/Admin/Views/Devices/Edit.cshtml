@@ -1,0 +1,26 @@
+﻿@model SySIntegral.Web.Areas.Admin.Models.Devices.CreateDeviceViewModel
+
+@{
+    ViewData["Title"] = "Editar Dispositivo";
+}
+
+<h1>Editar Dispositivo</h1>
+<hr />
+<div class="row">
+    <div class="col-12">
+
+        <form asp-route-returnUrl="" asp-action="Update" method="post">
+            
+            <partial name="_DeviceForm"/>
+
+            <button type="submit" class="btn btn-primary">Grabar</button>
+        </form>
+    </div>
+</div>
+<div class="mt-2">
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

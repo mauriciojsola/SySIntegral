@@ -18,10 +18,16 @@ namespace SySIntegral.Core.Repositories.Assets
         {
             return GetAll().FirstOrDefault(x => x.Name == name && x.Organization.Id == organizationId);
         }
+
+        public IQueryable<Asset> GetByOrganization(int organizationId)
+        {
+            return GetAll().Where(x => x.Organization.Id == organizationId);
+        }
     }
 
     public interface IAssetRepository : IRepository<Asset>
     {
         Asset GetByName(string modelName, int modelSelectedOrganizationId);
+        IQueryable<Asset> GetByOrganization(int organizationId);
     }
 }

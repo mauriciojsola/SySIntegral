@@ -19,7 +19,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 {
     [Route("Admin/[Controller]")]
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Administrador")]
     public class OrganizationsController : SySIntegralBaseController
     {
         private readonly IOrganizationRepository _organizationRepository;

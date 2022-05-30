@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SySIntegral.Core.Entities.Assets;
-using SySIntegral.Core.Entities.Organizations;
-using SySIntegral.Core.Entities.Users;
-using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.Organizations;
 using SySIntegral.Web.Areas.Admin.Models.Assets;
-using SySIntegral.Web.Areas.Admin.Models.Organizations;
-using SySIntegral.Web.Areas.Admin.Models.Users;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
 {
     [Route("Admin/[Controller]")]
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Administrador de Organización")]
     public class AssetsController : SySIntegralBaseController
     {
         private readonly IAssetRepository _assetRepository;
@@ -135,6 +128,11 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             model.Organizations = IsLimitedByOrganization
                 ? _organizationRepository.GetAll().Where(x => x.Id == OrganizationId).OrderBy(x => x.Name).ToList()
                 : _organizationRepository.GetAll().OrderBy(x => x.Name).ToList();
+
+            if (IsLimitedByOrganization)
+                model.SelectedOrganizationId = OrganizationId;
+
+            model.IsLimitedByOrganization = IsLimitedByOrganization;
         }
 
         private List<string> ValidateModel(CreateAssetViewModel model)
@@ -142,7 +140,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var errors = new List<string>();
 
             if (IsLimitedByOrganization && model.SelectedOrganizationId != OrganizationId)
-                errors.Add("Usted no está autorizado a editar esa Instalación");
+                errors.Add("Usted no está autorizado a editar ésta Instalación");
 
             if (string.IsNullOrWhiteSpace(model.Name))
             {

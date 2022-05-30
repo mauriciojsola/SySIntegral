@@ -39,6 +39,9 @@ namespace SySIntegral.Core.Infrastructure.Auth
         public int GetOrganizationId() =>
             IsAuthenticated() && _user != null ? _user.GetOrganizationId() : 0;
 
+        public string GetOrganizationName() =>
+            IsAuthenticated() && _user != null ? _user.GetOrganizationName() : string.Empty;
+
         public void SetCurrentUser(ClaimsPrincipal user)
         {
             if (_user != null)

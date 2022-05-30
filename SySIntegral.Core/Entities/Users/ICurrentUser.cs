@@ -11,6 +11,7 @@ namespace SySIntegral.Core.Entities.Users
         Guid GetUserId();
         string GetUserEmail();
         int GetOrganizationId();
+        string GetOrganizationName();
         bool IsAuthenticated();
         bool IsInRole(string role);
         bool IsLimitedByOrganization();

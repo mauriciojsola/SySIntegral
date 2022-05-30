@@ -36,8 +36,10 @@ namespace SySIntegral.Web.Areas.Admin.Models.Users
         [Display(Name = "Rol")]
         public string RoleId { get; set; }
 
-        [Required(ErrorMessage = "La organización es requerida")]
         [Display(Name = "Organización")]
-        public int OrganizationId { get; set; }
+        [Required(ErrorMessage = "La Organización es requerida")]
+        public int SelectedOrganizationId { get; set; }
+
+        public bool IsLimitedByOrganization { get; set; }
     }
 }

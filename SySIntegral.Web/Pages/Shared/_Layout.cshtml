@@ -2,6 +2,7 @@
 @using SySIntegral.Core.Entities.Roles
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject ICurrentUser currentUser
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,35 +43,45 @@
                         @{
                             var isSignedIn = SignInManager.IsSignedIn(User);
                             var isAdmin = User.IsInRole(SySRoles.Administrator);
+                            var isOrgAdmin = User.IsInRole(SySRoles.OrganizationAdministrator);
                         }
 
                         @if (isSignedIn)
                         {
+                            @if (isAdmin || isOrgAdmin)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Administrar
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                        @if (isAdmin)
+                                        {
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
+                                        }
+
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Assets" asp-action="Index">Instalaciones</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Devices" asp-action="Index">Dispositivos</a>
+
+                                        <div class="dropdown-divider"></div>
+                                        @if (isAdmin)
+                                        {
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                                        }
+
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
+                                    </div>
+                                </li>
+                            }
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Administrar
+                                    Reportes
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                                    @if (isAdmin)
-                                    {
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
-                                    }
-
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
-
-                                    @if (isAdmin)
-                                    {
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
-                                    }
-
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Assets" asp-action="Index">Instalaciones</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Devices" asp-action="Index">Dispositivos</a>
-
-                                    <div class="dropdown-divider"></div>
-
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Registries" asp-action="Index">Registros</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reportes</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Reports" asp-action="Index">Gráficos</a>
 
                                     @*<div class="dropdown-divider"></div>*@
                                 </div>
@@ -90,9 +101,19 @@
     </div>
 
     <footer class="border-top footer text-muted bg-dark">
+
         <div class="container">
-            &copy; @DateTime.Now.Year - SySIntegral
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    &copy; @DateTime.Now.Year - SySIntegral
+                </div>
+                <div>
+                    <span style="color: cadetblue;">@currentUser.GetOrganizationName()</span>
+                </div>
+            </div>
         </div>
+
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

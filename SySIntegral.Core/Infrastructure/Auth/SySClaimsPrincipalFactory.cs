@@ -23,7 +23,11 @@ namespace SySIntegral.Core.Infrastructure.Auth
 
             var userWitOrg = UserManager.Users.Include(x => x.Organization).FirstOrDefault(x => x.Id == user.Id);
             if (userWitOrg?.Organization != null)
+            {
                 claims.Add(new Claim(SySClaims.OrganizationId, userWitOrg.Organization.Id.ToString()));
+                claims.Add(new Claim(SySClaims.OrganizationName, userWitOrg.Organization.Name));
+            }
+
 
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
 

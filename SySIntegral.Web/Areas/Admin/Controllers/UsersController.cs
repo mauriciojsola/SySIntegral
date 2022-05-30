@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SySIntegral.Core.Entities.Organizations;
+using SySIntegral.Core.Entities.Roles;
 using SySIntegral.Core.Entities.Users;
 using SySIntegral.Core.Repositories;
 using SySIntegral.Web.Areas.Admin.Models.Users;
@@ -16,7 +17,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 {
     [Route("Admin/[Controller]")]
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Administrador de Organización")]
     public class UsersController : SySIntegralBaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -70,15 +71,17 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [Route("Create")]
         public IActionResult Create()
         {
-            InitModel();
-            return View(new CreateUserViewModel());
+            var model = new CreateUserViewModel();
+            InitModel(model);
+            return View(model);
         }
 
-        [Route("Edit")]
+        [Route("{id}/Edit")]
         public async Task<IActionResult> Edit(string id)
         {
-            InitModel();
-
+            var model = new CreateUserViewModel();
+            InitModel(model);
+            
             var user = await _userManager.FindByIdAsync(id);
             var roles = _roleManager.Roles.ToList();
             var userRole = "";
@@ -98,7 +101,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                     Email = user.Email,
                     Password = "",
                     Id = user.Id,
-                    OrganizationId = user.OrganizationId,
+                    SelectedOrganizationId = user.OrganizationId,
                     RoleId = userRole,
                     FirstName = user.FirstName,
                     LastName = user.LastName
@@ -119,7 +122,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("", error);
                 }
-                InitModel();
+                InitModel(model);
                 return View("Edit", model);
             }
 
@@ -127,12 +130,12 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 ? await _userManager.FindByIdAsync(model.Id)
             : new ApplicationUser();
 
-            var org = _organizationRepository.GetById(model.OrganizationId);
+            var org = _organizationRepository.GetById(model.SelectedOrganizationId);
             var role = _roleManager.FindByIdAsync(model.RoleId).Result;
 
             if (user != null)
             {
-                user.OrganizationId = model.OrganizationId;
+                user.OrganizationId = model.SelectedOrganizationId;
                 user.Organization = org;
                 user.UserName = model.Email;
                 user.Email = model.Email;
@@ -157,7 +160,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                         else
                         {
                             Errors(r);
-                            InitModel();
+                            InitModel(model);
                             return View("Edit", model);
                         }
                     }
@@ -165,14 +168,14 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 else
                 {
                     Errors(result);
-                    InitModel();
+                    InitModel(model);
                     return View("Edit", model);
                 }
             }
             else
             {
                 ModelState.AddModelError("", "Usuario no encontrado");
-                InitModel();
+                InitModel(model);
                 return View("Edit", model);
             }
 
@@ -192,18 +195,28 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             }
         }
 
-        private void InitModel()
+        private void InitModel(CreateUserViewModel model)
         {
-            ViewData["roles"] = _roleManager.Roles.ToList();
+            var roles = _roleManager.Roles.ToList();
+            if (IsLimitedByOrganization)
+            {
+                var adminRole = roles.FirstOrDefault(x => x.Name == SySRoles.Administrator);
+                if (adminRole != null)
+                    roles.Remove(adminRole);
+            }
+
+            ViewData["roles"] = roles;
             ViewData["organizations"] = IsLimitedByOrganization
                     ? _organizationRepository.GetAll().Where(x => x.Id == OrganizationId).OrderBy(x => x.Name).ToList()
                     : _organizationRepository.GetAll().OrderBy(x => x.Name).ToList();
+
+            model.IsLimitedByOrganization = IsLimitedByOrganization;
         }
 
         private List<string> ValidateModel(CreateUserViewModel model)
         {
             var errors = new List<string>();
-            if (model.OrganizationId <= 0)
+            if (model.SelectedOrganizationId <= 0)
                 errors.Add("La organización es requerida");
 
             if (string.IsNullOrWhiteSpace(model.Email))
@@ -248,7 +261,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("Delete")]
+        [Route("{id}/Delete")]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -262,7 +275,8 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             }
             else
                 ModelState.AddModelError("", "User Not Found");
-            return View("Index", _userManager.Users);
+
+            return RedirectToAction("Index");
         }
 
         private void Errors(IdentityResult result)

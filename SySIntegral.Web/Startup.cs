@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
@@ -47,9 +48,19 @@ namespace SySIntegral.Web
             //    options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
             //});
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddControllersWithViews() // When using Pages along with Controllers+Views
                 .AddNewtonsoftJson()
-                .AddRazorRuntimeCompilation();
+                .AddRazorRuntimeCompilation()
+                .AddSessionStateTempDataProvider();
             services.AddRazorPages();
         }
 
@@ -93,10 +104,12 @@ namespace SySIntegral.Web
 
             app.UseRouting();
 
+            app.UseSession();
+
             app.UseAuthentication();
             app.UseSySCurrentUser();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

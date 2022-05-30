@@ -1,70 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SySIntegral.Core.Entities.Organizations;
-using SySIntegral.Core.Entities.Users;
-using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Application.Common.Utils;
+using SySIntegral.Core.Application.Mvc.ViewFeatures;
+using SySIntegral.Core.Entities.Assets;
+using SySIntegral.Core.Entities.Devices;
+using SySIntegral.Core.Repositories.Assets;
+using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.Organizations;
-using SySIntegral.Web.Areas.Admin.Models.Organizations;
-using SySIntegral.Web.Areas.Admin.Models.Users;
+using SySIntegral.Web.Areas.Admin.Models.Devices;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
 {
     [Route("Admin/[Controller]")]
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Administrador de Organización")]
     public class DevicesController : SySIntegralBaseController
     {
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IAssetRepository _assetRepository;
+        private readonly IDeviceRepository _deviceRepository;
         private readonly ILogger<DevicesController> _logger;
 
-        public DevicesController(IOrganizationRepository organizationRepository, ILogger<DevicesController> logger)
+        public DevicesController(IOrganizationRepository organizationRepository, IAssetRepository assetRepository, IDeviceRepository deviceRepository, ILogger<DevicesController> logger)
         {
             _logger = logger;
             _organizationRepository = organizationRepository;
+            _assetRepository = assetRepository;
+            _deviceRepository = deviceRepository;
         }
 
         [Route("")]
         public IActionResult Index()
         {
-            var organizations = IsLimitedByOrganization
-                    ? _organizationRepository.GetAll().Where(x => x.Id == OrganizationId).Include(x => x.Assets).ToList()
-                    : _organizationRepository.GetAll().Include(x => x.Assets).ToList();
+            var devices = IsLimitedByOrganization
+                ? _deviceRepository.GetAll().Where(x => x.Asset.Organization.Id == OrganizationId).Include(x => x.Asset).ThenInclude(x => x.Organization)
+                    .OrderBy(x => x.Asset.Organization.Name).ThenBy(x => x.Asset.Name).ThenBy(x => x.Description).ToList()
+                : _deviceRepository.GetAll().Include(x => x.Asset).ThenInclude(x => x.Organization)
+                    .OrderBy(x => x.Asset.Organization.Name).ThenBy(x => x.Asset.Name).ThenBy(x => x.Description).ToList();
 
-            return View(organizations);
+            return View(devices);
         }
 
         [Route("Create")]
         public IActionResult Create()
         {
-            InitModel();
-            return View(new CreateOrganizationViewModel());
+            LoadErrors();
+            var model = TempData.Get<CreateDeviceViewModel>(TempDataKey) ?? new CreateDeviceViewModel();
+            InitModel(model);
+            if (model.UniqueId.IsNullOrWhiteSpace())
+                model.UniqueId = Guid.NewGuid().ToString();
+
+            return View(model);
         }
 
-        [Route("Edit")]
+        [Route("{id}/Edit")]
         public IActionResult Edit(int id)
         {
-            if (IsLimitedByOrganization && id != OrganizationId)
-                return Unauthorized("Usted no está autorizado a editar esa Organización");
+            LoadErrors();
+            var model = TempData.Get<CreateDeviceViewModel>(TempDataKey) ?? new CreateDeviceViewModel();
+            InitModel(model);
 
-            InitModel();
+            var device = _deviceRepository.GetById(id);
 
-            var organization = _organizationRepository.GetById(id);
-
-            if (organization != null)
+            if (device != null)
             {
-                return View(new CreateOrganizationViewModel
-                {
-                    Id = organization.Id,
-                    Name = organization.Name
-                });
+                if (IsLimitedByOrganization && device.Asset.Organization.Id != OrganizationId)
+                    return Unauthorized("Usted no está autorizado a editar éste Dispositivo");
+
+                model.Id = device.Id;
+                model.Description = device.Description.Trim();
+                model.UniqueId = device.UniqueId;
+                model.SelectedAssetId = device.Asset.Id;
+                model.SelectedOrganizationId = device.Asset.Organization.Id;
+                model.Assets = _assetRepository.GetByOrganization(model.SelectedOrganizationId).OrderBy(x => x.Name).ToList();
+
+                return View(model);
             }
             else
                 return RedirectToAction("Index");
@@ -72,113 +87,125 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("Update")]
-        public IActionResult Update(CreateOrganizationViewModel model)
+        public IActionResult Update(CreateDeviceViewModel model)
         {
             var errors = ValidateModel(model);
             if (errors.Any())
             {
-                ModelState.Clear();
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError("", error);
-                }
-                InitModel();
-                return View("Edit", model);
+                TempData.Set<CreateDeviceViewModel>(TempDataKey, model);
+                return model.Id > 0 ? RedirectToAction("Edit") : RedirectToAction("Create");
             }
 
             try
             {
-                var org = model.Id > 0
-                    ? _organizationRepository.GetById(model.Id)
-                    : new Organization();
+                var device = model.Id > 0
+                    ? _deviceRepository.GetById(model.Id)
+                    : new Device();
 
-                if (org != null)
+                if (device != null)
                 {
-                    org.Name = model.Name;
+                    device.Description = model.Description.Trim();
+                    device.Asset = _assetRepository.GetById(model.SelectedAssetId);
 
                     if (model.Id > 0)
                     {
-                        _organizationRepository.Update(org);
+                        _deviceRepository.Update(device);
                     }
                     else
                     {
-                        _organizationRepository.Insert(org);
+                        _deviceRepository.Insert(device);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Organización no encontrada");
-                    InitModel();
-                    return View("Edit", model);
+                    AddErrors(new List<string> { "Dispositivo no encontrado" });
+                    TempData.Set<CreateDeviceViewModel>(TempDataKey, model);
+                    return model.Id > 0 ? RedirectToAction("Edit") : RedirectToAction("Create");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("No se puede actualizar la Organización", ex);
-                InitModel();
-                return View("Edit", model);
+                _logger.LogError("No se puede actualizar el Dispositivo", ex);
+                AddErrors(new List<string> { "No se puede actualizar el Dispositivo" });
+                TempData.Set<CreateDeviceViewModel>(TempDataKey, model);
+                return model.Id > 0 ? RedirectToAction("Edit") : RedirectToAction("Create");
             }
 
             return RedirectToAction("Index");
         }
 
-        private void InitModel()
+        [HttpGet]
+        [Route("GetAssets")]
+        public JsonResult GetAssetsPerOrganization(int organizationId)
         {
-
+            return Json(new { });
         }
 
-        private List<string> ValidateModel(CreateOrganizationViewModel model)
+        private void InitModel(CreateDeviceViewModel model)
+        {
+            model.Organizations = IsLimitedByOrganization
+                ? _organizationRepository.GetAll().Where(x => x.Id == OrganizationId).OrderBy(x => x.Name).ToList()
+                : _organizationRepository.GetAll().OrderBy(x => x.Name).ToList();
+
+            if (IsLimitedByOrganization)
+                model.SelectedOrganizationId = OrganizationId;
+
+            model.IsLimitedByOrganization = IsLimitedByOrganization;
+        }
+
+        private List<string> ValidateModel(CreateDeviceViewModel model)
         {
             var errors = new List<string>();
 
-            if (IsLimitedByOrganization && model.Id != OrganizationId)
-                errors.Add("Usted no está autorizado a editar esa Organización");
+            if (IsLimitedByOrganization && model.SelectedOrganizationId != OrganizationId)
+                errors.Add("Usted no está autorizado a editar éste Dispositivo");
 
-            if (string.IsNullOrWhiteSpace(model.Name))
+            if (string.IsNullOrWhiteSpace(model.Description))
             {
-                errors.Add("El nombre es requerido");
+                errors.Add("La Descripción del dispositivo es requerida");
             }
 
-            var org = _organizationRepository.GetByName(model.Name);
-            if (org != null && org.Id != model.Id)
+            var device = _deviceRepository.GetByDescription(model.Description, model.SelectedOrganizationId);
+            if (device != null && device.Id != model.Id)
             {
-                errors.Add("Una Organización con el mismo nombre ya existe");
+                errors.Add("Un Dispositivo con el mismo nombre ya existe");
             }
 
+            device = _deviceRepository.GetByUniqueID(model.UniqueId);
+            if (device != null && device.Id != model.Id)
+            {
+                errors.Add("Un Dispositivo con el mismo ID ya existe");
+            }
+
+            AddErrors(errors);
             return errors;
         }
 
         [HttpPost]
-        [Route("Delete")]
+        [Route("{id}/Delete")]
         public IActionResult Delete(int id)
         {
-            if (IsLimitedByOrganization && id != OrganizationId)
-                return Unauthorized("Usted no está autorizado a eliminar esa Organización");
-
             try
             {
-                var org = _organizationRepository.GetById(id);
+                var asset = _assetRepository.GetById(id);
 
-                if (org != null)
+                if (asset != null)
                 {
-                    _organizationRepository.Delete(org);
+                    if (IsLimitedByOrganization && asset.Organization.Id != OrganizationId)
+                        return Unauthorized("Usted no está autorizado a eliminar éste Dispositivo");
 
+                    _assetRepository.Delete(asset);
                 }
                 else
-                    ModelState.AddModelError("", "Organización no encontrada");
-                return View("Index");
+                    AddErrors("Dispositivo no encontrada");
+
             }
             catch (Exception ex)
             {
-                _logger.LogError("No se puede borrar la Organización", ex);
+                _logger.LogError("No se puede borrar el Dispositivo", ex);
+                AddErrors("No se puede borrar el Dispositivo");
             }
             return RedirectToAction("Index");
-        }
-
-        private void Errors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-                ModelState.AddModelError("", error.Description);
         }
 
     }
