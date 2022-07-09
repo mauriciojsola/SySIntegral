@@ -17,7 +17,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Authorize]
     public class RegistriesController : SySIntegralBaseController
     {
-        //private readonly IRepository<EggRegistry> _eggRegistryRepository;
+        private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly ILogger<RegistriesController> _logger;
         private readonly IEggRegistryReportRepository _reportRepository;
 
@@ -26,7 +26,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         public RegistriesController(IRepository<EggRegistry> eggRegistryRepository, ILogger<RegistriesController> logger, IEggRegistryReportRepository reportRepository)
         {
             _logger = logger;
-            //_eggRegistryRepository = eggRegistryRepository;
+            _eggRegistryRepository = eggRegistryRepository;
             _reportRepository = reportRepository;
         }
 
@@ -44,15 +44,15 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
             var dateTotals = GetRegistries(startDate, endDate);
 
-            //var regs = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
+            var regs = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
 
             return View(new RegistriesModel
             {
                 StartDate = startDate,
                 EndDate = endDate,
-                //Registries = regs,
+                Registries = regs,
                 DateTotals = dateTotals.ToList(),
-                //TotalRecords = _eggRegistryRepository.GetAll().Count()
+                TotalRecords = _eggRegistryRepository.GetAll().Count()
             });
         }
 

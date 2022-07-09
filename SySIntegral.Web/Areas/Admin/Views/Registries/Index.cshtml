@@ -49,6 +49,7 @@
         Refrescar
     </button>
     <hr />
+    
 
     <div id="reportrange" style="background: #fff; cursor: pointer; padding: 10px 10px; border: 2px solid #ccc; width: 100%">
         <i class="fa fa-calendar"></i>&nbsp;
@@ -57,31 +58,10 @@
 
     <hr />
     <h2>Totales Por Día</h2>
-    @*<div class="table-responsive-md">
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Huevos Blancos</th>
-                        <th>Huevos Color</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var record in Model.DateTotals)
-                    {
-                        <tr>
-                            <td>@record.Date.ToString("d")</td>
-                            <td>@record.Totals.WhiteEggsCount</td>
-                            <td>@record.Totals.ColorEggsCount</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>*@
-
-
+   
     <div id="dailyRegistriesContainer">
-        @Html.Partial("_DailyRegistriesList", Model.DateTotals)
+        @*@Html.Partial("_DailyRegistriesList", Model.DateTotals)*@
+        <partial name="_DailyRegistriesList" model="Model.DateTotals" />
     </div>
 
     <hr />

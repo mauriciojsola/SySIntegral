@@ -139,3 +139,23 @@ html {
 .text-egg-color {
     color: #d48b62;
 }
+
+/** Tables customization */
+.table-condensed {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.table-condensed tr, .table-condensed td, .table-condensed th {
+        padding: 0.1rem;
+    }
+
+@media (max-width: 640px) {
+    .table-condensed {
+        font-size: 0.7rem;
+    }
+
+    .table-condensed tr, .table-condensed td, .table-condensed th {
+            padding: 0rem;
+        }
+}
