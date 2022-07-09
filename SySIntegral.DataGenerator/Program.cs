@@ -12,7 +12,6 @@ namespace SySIntegral.DataGenerator
 {
     class Program
     {
-
         static readonly HttpClient client = new HttpClient();
         private static readonly Random rnd = new Random();
 
@@ -40,32 +39,32 @@ namespace SySIntegral.DataGenerator
             {
                 var lines = new List<string>();
 
-                var startDate = new DateTime(2022, 05, 01);
+                var startDate = new DateTime(2022, 06, 01);
                 //var line = $"DeviceId,Timestamp,WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp";
                 //Debug.WriteLine(line);
-                for (var d = 0; d < 10; d++)
+                for (var d = 0; d < 60; d++)
                 {
                     var whiteCounter = 0;
                     var colorCounter = 0;
                     for (var h = 0; h < 24; h++)
                     {
-                        // Create 5 registries per hour
+                        // Create registries per hour
                         for (var r = 0; r < 3; r++)
                         {
                             var rDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, h, GetRandomNumber(r * 12, ((r + 1) * 12) - 1), GetRandomNumber(0, 59));
-                            var data = new EggCounterRegistry
-                            {
-                                DeviceId = "df73016a-b1bf-11ec-b909-0242ac120002",
-                                WhiteEggsCount = whiteCounter,
-                                ColorEggsCount = colorCounter,
-                                ReadTimestamp = rDate.ToString("yyyyMMddHHmmss"),
-                                ExportTimestamp = rDate.ToString("yyyyMMddHHmmss"),
-                            };
+                            //var data = new EggCounterRegistry
+                            //{
+                            //    DeviceId = "df73016a-b1bf-11ec-b909-0242ac120002",
+                            //    WhiteEggsCount = whiteCounter,
+                            //    ColorEggsCount = colorCounter,
+                            //    ReadTimestamp = rDate.ToString("yyyyMMddHHmmss"),
+                            //    ExportTimestamp = rDate.ToString("yyyyMMddHHmmss"),
+                            //};
 
                             //var url = await CreateRegistryAsync(data);
                             //var line = $"'df73016a-b1bf-11ec-b909-0242ac120002','{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}'";
 
-                            lines.Add($"insert into EggRegistry (DeviceId,[Timestamp],WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp) VALUES ('df73016a-b1bf-11ec-b909-0242ac120002','{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}')");
+                            lines.Add($"insert into EggRegistry (DeviceId,[Timestamp],WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp) VALUES (11,'{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}')");
                             //Debug.WriteLine(line);
                             //Task.Delay(500).Wait();
                             whiteCounter += GetRandomNumber(100, 1300);
@@ -75,7 +74,7 @@ namespace SySIntegral.DataGenerator
                     startDate = startDate.AddDays(1);
                 }
 
-                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegral2.txt", lines);
+                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegraljunjuldev2.txt", lines);
 
             }
             catch (Exception e)

@@ -34,11 +34,11 @@ namespace SySIntegral.Web
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Scoped);
+            services.AddSingleton<DapperDbContext>(); 
 
             services.AddSySAuth(Configuration);
             services.AddRepositories();
-
-
+            
             services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
             services.AddScoped<ApiAuthorizeFilter>();
 

@@ -15,6 +15,7 @@ using SySIntegral.Core.Entities.Users;
 using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.Devices;
+using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Core.Repositories.Organizations;
 
 namespace SySIntegral.Core.Infrastructure.Auth
@@ -53,11 +54,11 @@ namespace SySIntegral.Core.Infrastructure.Auth
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IAssetRepository, AssetRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IEggRegistryReportRepository, EggRegistryReportRepository>();
 
             return services;
         }
-
-
+        
         private static IServiceCollection AddCurrentUser(this IServiceCollection services) =>
             services
                 .AddScoped<CurrentUserMiddleware>()

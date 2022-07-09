@@ -3,21 +3,22 @@
 @{
     ViewData["Title"] = "Registros";
     var todaysTotals = Model.TodaysTotals;
-    var todaysWhiteCounter = todaysTotals != null ? todaysTotals.Totals.WhiteEggsCount : 0;
-    var todaysColorCounter = todaysTotals != null ? todaysTotals.Totals.ColorEggsCount : 0;
+    var todaysWhiteCounter = todaysTotals != null ? todaysTotals.WhiteEggsCount : 0;
+    var todaysColorCounter = todaysTotals != null ? todaysTotals.ColorEggsCount : 0;
+    var totalSum = todaysWhiteCounter + todaysColorCounter;
 }
 
 
 @*<a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="Roles" asp-action="Create">Crear Role</a>*@
 <div class="registries-container">
-    <h2>@(todaysTotals != null ? todaysTotals.Date.ElapsedTimeInWords() : "Última lectura")</h2>
+    <h2>@(todaysTotals != null ? todaysTotals.RegistryDate.ElapsedTimeInWords() : "Última lectura")</h2>
 
     <div class="row no-gutters">
         <div class="col">
             <div class="card mr-1 counter counter-white">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Blancos</h5>
-                    <h1 class="card-text text-center"><strong>@todaysWhiteCounter.ToString("N0")</strong></h1>
+                    @*<h5 class="card-title text-center">Blancos</h5>*@
+                    <h2 class="card-text text-center"><strong>@todaysWhiteCounter.ToString("N0")</strong></h2>
 
                 </div>
             </div>
@@ -25,11 +26,23 @@
         <div class="col">
             <div class="card ml-1 counter counter-color">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Color</h5>
-                    <h1 class="card-text text-center"><strong>@todaysColorCounter.ToString("N0")</strong></h1>
+                    @*<h5 class="card-title text-center">Color</h5>*@
+                    <h2 class="card-text text-center"><strong>@todaysColorCounter.ToString("N0")</strong></h2>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row no-gutters">
+        <div class="col">
+            <div class="card mt-1 counter counter-white">
+                <div class="card-body">
+                    <h6 class="text-center m-0">TOTAL</h6>
+                    <h1 class="card-text text-center"><strong>@totalSum.ToString("N0")</strong></h1>
+
+                </div>
+            </div>
+        </div>
+       
     </div>
     <button id="RefreshPage" class="btn btn-sm btn-info mt-1" name="RefreshPage">
         <i class="bi bi-arrow-clockwise"></i>
@@ -87,13 +100,15 @@
             <tbody>
                 @foreach (var record in Model.Registries)
                 {
-                <tr>
-                    <td style="font-size: 12px;"><div>@record.Device.UniqueId</div>
-                        <div>(@record.Device.Description)</div></td>
-                    <td>@record.WhiteEggsCount</td>
-                    <td>@record.ColorEggsCount</td>
-                    <td>@(record.ReadTimestamp.HasValue ? record.ReadTimestamp.Value.ToString("g") : "VACÍO")</td>
-                </tr>
+                    <tr>
+                        <td style="font-size: 12px;">
+                            <div>@record.Device.UniqueId</div>
+                            <div>(@record.Device.Description)</div>
+                        </td>
+                        <td>@record.WhiteEggsCount</td>
+                        <td>@record.ColorEggsCount</td>
+                        <td>@(record.ReadTimestamp.HasValue ? record.ReadTimestamp.Value.ToString("g") : "VACÍO")</td>
+                    </tr>
                 }
             </tbody>
         </table>
