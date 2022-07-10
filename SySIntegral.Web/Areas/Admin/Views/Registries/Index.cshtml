@@ -142,7 +142,7 @@
             var end = moment();
 
             function initDatePicker(start, end) {
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                $('#reportrange span').html(formatDateToSpanish(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY')));
             }
 
             $('#reportrange').daterangepicker({
@@ -219,6 +219,22 @@
             
             
         });
+        
+        function formatDateToSpanish(englishedDate) {
+            var spanishedDate = englishedDate.replaceAll('January', 'Enero');
+            spanishedDate = spanishedDate.replaceAll('February', 'Febrero');
+            spanishedDate = spanishedDate.replaceAll('March', 'Marzo');
+            spanishedDate = spanishedDate.replaceAll('April', 'Abril');
+            spanishedDate = spanishedDate.replaceAll('May', 'Mayo');
+            spanishedDate = spanishedDate.replaceAll('June', 'Junio');
+            spanishedDate = spanishedDate.replaceAll('July', 'Julio');
+            spanishedDate = spanishedDate.replaceAll('August', 'Agosto');
+            spanishedDate = spanishedDate.replaceAll('September', 'Septiembre');
+            spanishedDate = spanishedDate.replaceAll('October', 'Octubre');
+            spanishedDate = spanishedDate.replaceAll('November', 'Noviembre');
+            spanishedDate = spanishedDate.replaceAll('December', 'Diciembre');
+            return spanishedDate;
+        }
 
         function getDevices() {
             // Get selected options.
