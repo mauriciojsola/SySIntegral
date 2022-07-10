@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Assets;
+using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
@@ -20,29 +22,27 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly ILogger<RegistriesController> _logger;
         private readonly IEggRegistryReportRepository _reportRepository;
+        private readonly IAssetRepository _assetRepository;
 
         private const int ReportDays = -6;
 
-        public RegistriesController(IRepository<EggRegistry> eggRegistryRepository, ILogger<RegistriesController> logger, IEggRegistryReportRepository reportRepository)
+        public RegistriesController(IRepository<EggRegistry> eggRegistryRepository, ILogger<RegistriesController> logger,
+            IEggRegistryReportRepository reportRepository, IAssetRepository assetRepository)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
             _reportRepository = reportRepository;
+            _assetRepository = assetRepository;
         }
 
         [Route("")]
         public IActionResult Index()
         {
-            //var res = from data in _eggRegistryRepository.GetAll().AsEnumerable()
-            //    where data.ReadTimestamp != null
-            //    group data by new { data.ReadTimestamp.Value.Year, data.ReadTimestamp.Value.Month, data.ReadTimestamp.Value.Day }
-            //    into dataGroup
-            //    select dataGroup; //.OrderBy(eg => eg.ReadTimestamp.Value).Max();
-
             var startDate = DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             var endDate = DateTime.Now.AbsoluteEnd();
 
-            var dateTotals = GetRegistries(startDate, endDate);
+            var assetDevices = GetAssetDevices();
+            var dateTotals = GetRegistries(startDate, endDate, assetDevices.SelectMany(x => x.Devices).Select(x => x.Id).Distinct().ToList());
 
             var regs = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
 
@@ -51,31 +51,45 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 StartDate = startDate,
                 EndDate = endDate,
                 Registries = regs,
+                AssetDevices = assetDevices,
                 DateTotals = dateTotals.ToList(),
                 TotalRecords = _eggRegistryRepository.GetAll().Count()
             });
         }
 
+        private IList<AssetDevicesModel> GetAssetDevices()
+        {
+            var result = _assetRepository.GetAll().Include(x => x.Devices)
+                .Where(x => x.Organization.Id == OrganizationId).OrderBy(x => x.Name)
+                .Select(x => new AssetDevicesModel
+                {
+                    AssetName = x.Name,
+                    Devices = x.Devices.OrderBy(d => d.Description).Select(m => new DeviceModel { Id = m.Id, Name = m.Description, UniqueId = m.UniqueId }).ToList()
+                }).ToList();
+
+            return result;
+        }
+
         [Route("filter")]
         [HttpPost]
-        public IActionResult FilterRegistries(DateTime? startDate, DateTime? endDate)
+        public IActionResult FilterRegistries(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
         {
             startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
 
-            var dateTotals = GetRegistries(startDate, endDate);
+            var dateTotals = GetRegistries(startDate, endDate, deviceIds);
 
             return PartialView("_DailyRegistriesList", dateTotals.ToList());
         }
 
-        private IEnumerable<RegistryDateTotalsDto> GetRegistries(DateTime? startDate, DateTime? endDate)
+        private IEnumerable<RegistryDateTotalsDto> GetRegistries(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
         {
             try
             {
                 startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(ReportDays).AbsoluteStart();
                 endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
 
-                return _reportRepository.GetRegistriesByDate(startDate.Value, endDate.Value, OrganizationId);
+                return _reportRepository.GetRegistriesByDate(startDate.Value, endDate.Value, deviceIds, OrganizationId);
 
                 //return _eggRegistryRepository.GetAll().AsEnumerable().Where(x => x.ReadTimestamp != null && x.ReadTimestamp >= startDate && x.ReadTimestamp < endDate && x.Device.Asset.Organization.Id == OrganizationId)
                 //    .GroupBy(x => new { x.ReadTimestamp.Value.Year, x.ReadTimestamp.Value.Month, x.ReadTimestamp.Value.Day })
@@ -96,6 +110,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             {
                 Registries = new List<EggRegistry>();
                 DateTotals = new List<RegistryDateTotalsDto>();
+                AssetDevices = new List<AssetDevicesModel>();
             }
 
             public DateTime StartDate { get; set; }
@@ -109,7 +124,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             {
                 get
                 {
-                    var latestRegistry = DateTotals.FirstOrDefault();
+                    var latestRegistry = DateTotals.OrderByDescending(x => x.RegistryDate).FirstOrDefault();
                     if (latestRegistry == null) return new RegistryDateTotalsDto
                     {
                         WhiteEggsCount = 0,
@@ -126,12 +141,26 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                     };
                 }
             }
+
+            public IList<AssetDevicesModel> AssetDevices { get; set; }
         }
     }
 
-    public class DateTotal
+    public class AssetDevicesModel
     {
-        public DateTime Date { get; set; }
-        public EggRegistry Totals { get; set; }
+        public AssetDevicesModel()
+        {
+            Devices = new List<DeviceModel>();
+        }
+        public string AssetName { get; set; }
+        public IList<DeviceModel> Devices { get; set; }
     }
+
+    public class DeviceModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string UniqueId { get; set; }
+    }
+
 }

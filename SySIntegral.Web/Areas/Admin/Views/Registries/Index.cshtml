@@ -42,23 +42,46 @@
                 </div>
             </div>
         </div>
-       
+
     </div>
     <button id="RefreshPage" class="btn btn-sm btn-info mt-1" name="RefreshPage">
         <i class="bi bi-arrow-clockwise"></i>
         Refrescar
     </button>
     <hr />
-    
 
-    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 10px 10px; border: 2px solid #ccc; width: 100%">
-        <i class="fa fa-calendar"></i>&nbsp;
-        <span></span> <i class="fa fa-caret-down"></i>
+
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            <div id="reportrange" style="background: #fff; cursor: pointer; padding: 6px 6px; border: 1px solid #ccc; border-radius: 0.25rem; width: 100%;" class="mb-1">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="mb-1">
+                <select id="assetsFilter" multiple="multiple" tabindex="-1">
+
+                    @foreach (var a in Model.AssetDevices.ToList())
+                    {
+                        <optgroup label="@a.AssetName">
+                            @foreach (var d in a.Devices.ToList())
+                            {
+                                <option value="@(d.Id)" selected="selected">@(d.Name)</option>
+                            }
+                        </optgroup>
+                    }
+
+                </select>
+            </div>
+        </div>
     </div>
+
+
 
     <hr />
     <h2>Totales Por Día</h2>
-   
+
     <div id="dailyRegistriesContainer">
         @*@Html.Partial("_DailyRegistriesList", Model.DateTotals)*@
         <partial name="_DailyRegistriesList" model="Model.DateTotals" />
@@ -112,25 +135,13 @@
             });
 
             $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
-                //console.debug("EV", ev);
-                //console.debug("PICKER", picker);
-                //console.debug("start:", picker.startDate);
-                //console.debug("end:", picker.endDate);
-                console.log("apply event fired, start/end dates are " + picker.startDate.format('YYYY-MM-DD') + " to " + picker.endDate.format('YYYY-MM-DD'));
-
-                $.post("Registries/filter", {
-                    startDate: picker.startDate.format('YYYY-MM-DD'),
-                    endDate: picker.endDate.format('YYYY-MM-DD'),
-                    }, function (data,status) {
-                    console.debug("Data: ", data, status);
-                    $('#dailyRegistriesContainer').html(data);
-                });
+                updateReport();
             });
 
             var start = moment().subtract(6, 'days');
             var end = moment();
 
-            function cb(start, end) {
+            function initDatePicker(start, end) {
                 $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             }
 
@@ -179,12 +190,67 @@
                     ],
                     "firstDay": 1
                 }
-            }, cb);
+            }, initDatePicker);
 
-            cb(start, end);
+            $('#assetsFilter').multiselect({
+                enableClickableOptGroups: true,
+                enableFiltering: true,
+                includeSelectAllOption: true,
+                maxHeight: 400,
+                buttonWidth: '100%',
+                enableCaseInsensitiveFiltering: true,
+                numberDisplayed: 2,
+                filterPlaceholder: 'Buscar',
+                buttonTextAlignment: 'left',
+                disabledText: 'Deshabilitado...',
+                nonSelectedText: 'Seleccione Dispositivo/Establecimiento',
+                nSelectedText: ' seleccionados',
+                allSelectedText: 'Todos seleccionados',
+                selectAllText: 'Seleccionar todos',
 
+                onChange: function (option, checked) {
+                    updateReport();
+                },
+                onSelectAll: function (option, checked) { updateReport(); },
+                onDeselectAll: function (option, checked) { updateReport();},
+            });
+
+            initDatePicker(start, end);
+            
+            
         });
+
+        function getDevices() {
+            // Get selected options.
+            var devices = [];
+            var selectedOptions = $('#assetsFilter option:selected').each(function () {
+                devices.push($(this).val());
+            });
+            return devices;
+        }
+
+        function getDateRange() {
+            return {
+                startDate: $('#reportrange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
+                endDate: $('#reportrange').data('daterangepicker').endDate.format('YYYY-MM-DD')
+            };
+        }
+
+        function updateReport() {
+            let dateRange = getDateRange();
+
+            $.post("Registries/filter", {
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                deviceIds: getDevices()
+            }, function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#dailyRegistriesContainer').html(data);
+            });
+        }
+
     </script>
 
 
+    
 }

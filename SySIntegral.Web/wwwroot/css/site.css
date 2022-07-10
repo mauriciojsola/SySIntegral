@@ -146,6 +146,11 @@ html {
     margin-bottom: 0;
 }
 
+.table-condensed .grand-total {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 .table-condensed tr, .table-condensed td, .table-condensed th {
         padding: 0.1rem;
     }
@@ -158,4 +163,10 @@ html {
     .table-condensed tr, .table-condensed td, .table-condensed th {
             padding: 0rem;
         }
+    .table-condensed .grand-total {
+        font-size: 0.8rem;
+    }
 }
+
+
+/** Tables customization */

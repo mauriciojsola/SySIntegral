@@ -36,17 +36,14 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             }
         }
 
-        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, int organizationId)
+        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId)
         {
             startDate = startDate.AbsoluteStart();
             endDate = endDate.AbsoluteEnd();
-
-            //var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate,r.DeviceId AS DeviceId, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount
-            //              FROM EggRegistry AS r
-            //            WHERE r.ReadTimeStamp IS NOT NULL
-            //            AND r.ReadTimestamp BETWEEN '{startDate:yyyy-MM-dd HH:mm:ss}' AND '{endDate:yyyy-MM-dd HH:mm:ss}'
-            //            GROUP BY CAST(r.ReadTimestamp as DATE), r.DeviceId
-            //            ORDER BY CAST(r.ReadTimestamp as DATE) DESC, r.DeviceId";
+            if (deviceIds == null || !deviceIds.Any())
+            {
+                deviceIds = new List<int> { -1 };
+            }
 
             var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
                         d.UniqueId AS DeviceId, d.[Description] AS DeviceDescription, a.Name AS AssetName
@@ -56,11 +53,10 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
                             INNER JOIN Organization AS o ON o.Id = a.OrganizationId
                         WHERE r.ReadTimeStamp IS NOT NULL
                         AND o.Id = {organizationId}
+                        AND d.Id IN({string.Join(",", deviceIds)})
                         AND r.ReadTimestamp BETWEEN '{startDate:yyyy-MM-dd HH:mm:ss}' AND '{endDate:yyyy-MM-dd HH:mm:ss}'
                         GROUP BY CAST(r.ReadTimestamp as DATE), d.UniqueId,d.[Description],a.Name
                             ORDER BY CAST(r.ReadTimestamp as DATE) DESC,a.Name, d.UniqueId";
-
-
 
             using (var connection = _context.CreateConnection())
             {
@@ -85,6 +81,6 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
     public interface IEggRegistryReportRepository
     {
         public Task<IEnumerable<RegistryDateTotalsDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId);
-        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, int organizationId);
+        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId);
     }
 }
