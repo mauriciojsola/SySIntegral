@@ -49,44 +49,44 @@
 
                         @if (isSignedIn)
                         {
-                            @if (isAdmin || isOrgAdmin)
+                        @if (isAdmin || isOrgAdmin)
                             {
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Administrar
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Administrar
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                                        @if (isAdmin)
+                                @if (isAdmin)
                                         {
-                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Organizations" asp-action="Index">Organizaciones</a>
                                         }
 
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Assets" asp-action="Index">Instalaciones</a>
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Devices" asp-action="Index">Dispositivos</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Assets" asp-action="Index">Instalaciones</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Devices" asp-action="Index">Dispositivos</a>
 
-                                        <div class="dropdown-divider"></div>
-                                        @if (isAdmin)
+                                <div class="dropdown-divider"></div>
+                                @if (isAdmin)
                                         {
-                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
                                         }
 
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
-                                    </div>
-                                </li>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="Index">Usuarios</a>
+                            </div>
+                        </li>
                             }
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Reportes
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Registries" asp-action="Index">Registros</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Reports" asp-action="Index">Gráficos</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Reportes
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Registries" asp-action="Index">Registros</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Reports" asp-action="Index">Gráficos</a>
 
-                                    @*<div class="dropdown-divider"></div>*@
-                                </div>
-                            </li>
+                                @*<div class="dropdown-divider"></div>*@
+                            </div>
+                        </li>
 
                         }
 
@@ -120,6 +120,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/bootstrap-multiselect.min.js"></script>
+    <script src="~/js/jquery.blockUI.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)

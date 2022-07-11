@@ -19,18 +19,15 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Authorize]
     public class RegistriesController : SySIntegralBaseController
     {
-        private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly ILogger<RegistriesController> _logger;
         private readonly IEggRegistryReportRepository _reportRepository;
         private readonly IAssetRepository _assetRepository;
 
         private const int ReportDays = -6;
 
-        public RegistriesController(IRepository<EggRegistry> eggRegistryRepository, ILogger<RegistriesController> logger,
-            IEggRegistryReportRepository reportRepository, IAssetRepository assetRepository)
+        public RegistriesController(IEggRegistryReportRepository reportRepository, IAssetRepository assetRepository, ILogger<RegistriesController> logger)
         {
             _logger = logger;
-            _eggRegistryRepository = eggRegistryRepository;
             _reportRepository = reportRepository;
             _assetRepository = assetRepository;
         }
@@ -44,16 +41,14 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var assetDevices = GetAssetDevices();
             var dateTotals = GetRegistries(startDate, endDate, assetDevices.SelectMany(x => x.Devices).Select(x => x.Id).Distinct().ToList());
 
-            var regs = _eggRegistryRepository.GetAll().Take(200).OrderByDescending(x => x.ReadTimestamp).ToList();
-
             return View(new RegistriesModel
             {
                 StartDate = startDate,
                 EndDate = endDate,
-                Registries = regs,
+                LatestRegistries = _reportRepository.GetLatestRegistries(OrganizationId).ToList(),
                 AssetDevices = assetDevices,
                 DateTotals = dateTotals.ToList(),
-                TotalRecords = _eggRegistryRepository.GetAll().Count()
+                TotalRecords = _reportRepository.GetRegistriesCount(OrganizationId)
             });
         }
 
@@ -82,7 +77,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             return PartialView("_DailyRegistriesList", dateTotals.ToList());
         }
 
-        private IEnumerable<RegistryDateTotalsDto> GetRegistries(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
+        private IEnumerable<RegistryEntryDto> GetRegistries(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
         {
             try
             {
@@ -101,31 +96,31 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 _logger.LogError(ex, "No se pueden cargar los registros.");
             }
 
-            return new List<RegistryDateTotalsDto>();
+            return new List<RegistryEntryDto>();
         }
 
         public class RegistriesModel
         {
             public RegistriesModel()
             {
-                Registries = new List<EggRegistry>();
-                DateTotals = new List<RegistryDateTotalsDto>();
+                LatestRegistries = new List<RegistryEntryDto>();
+                DateTotals = new List<RegistryEntryDto>();
                 AssetDevices = new List<AssetDevicesModel>();
             }
 
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
 
-            public IList<EggRegistry> Registries { get; set; }
+            public IList<RegistryEntryDto> LatestRegistries { get; set; }
             public int TotalRecords { get; set; }
-            public IList<RegistryDateTotalsDto> DateTotals { get; set; }
+            public IList<RegistryEntryDto> DateTotals { get; set; }
 
-            public RegistryDateTotalsDto TodaysTotals
+            public RegistryEntryDto TodayTotals
             {
                 get
                 {
                     var latestRegistry = DateTotals.OrderByDescending(x => x.RegistryDate).FirstOrDefault();
-                    if (latestRegistry == null) return new RegistryDateTotalsDto
+                    if (latestRegistry == null) return new RegistryEntryDto
                     {
                         WhiteEggsCount = 0,
                         ColorEggsCount = 0,
@@ -133,7 +128,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                     };
 
                     var latestData = DateTotals.Where(x => x.RegistryDate == latestRegistry.RegistryDate).ToList();
-                    return new RegistryDateTotalsDto
+                    return new RegistryEntryDto
                     {
                         WhiteEggsCount = latestData.Sum(x => x.WhiteEggsCount),
                         ColorEggsCount = latestData.Sum(x => x.ColorEggsCount),

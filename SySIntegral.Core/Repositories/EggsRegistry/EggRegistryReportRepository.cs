@@ -17,12 +17,12 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             _context = context;
         }
 
-        public async Task<IEnumerable<RegistryDateTotalsDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId)
+        public async Task<IEnumerable<RegistryEntryDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId)
         {
             startDate = startDate.AbsoluteStart();
             endDate = endDate.AbsoluteEnd();
 
-            var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate,r.DeviceId AS DeviceId, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount
+            var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate,r.DeviceId AS UniqueId, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount
                           FROM EggRegistry AS r
                         WHERE r.ReadTimeStamp IS NOT NULL
                         AND r.ReadTimestamp BETWEEN '{startDate:yyyy-MM-dd hh:mm}' AND '{endDate:yyyy-MM-dd hh:mm}'
@@ -31,12 +31,12 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
 
             using (var connection = _context.CreateConnection())
             {
-                var registries = await connection.QueryAsync<RegistryDateTotalsDto>(query);
+                var registries = await connection.QueryAsync<RegistryEntryDto>(query);
                 return registries.ToList();
             }
         }
 
-        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId)
+        public IEnumerable<RegistryEntryDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId)
         {
             startDate = startDate.AbsoluteStart();
             endDate = endDate.AbsoluteEnd();
@@ -46,7 +46,7 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             }
 
             var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
-                        d.UniqueId AS DeviceId, d.[Description] AS DeviceDescription, a.Name AS AssetName
+                        d.UniqueId AS UniqueId, d.[Description] AS DeviceDescription, a.Name AS AssetName
                             FROM EggRegistry AS r
                             INNER JOIN Device AS d ON d.Id = r.DeviceId
                             INNER JOIN Asset AS a ON a.Id = d.AssetId
@@ -60,18 +60,62 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
 
             using (var connection = _context.CreateConnection())
             {
-                var registries = connection.Query<RegistryDateTotalsDto>(query);
+                var registries = connection.Query<RegistryEntryDto>(query);
                 return registries.ToList();
             }
         }
 
+        public IEnumerable<RegistryEntryDto> GetLatestRegistries(int organizationId, int records = 200)
+        {
+            var qParams = new Dictionary<string, object>
+            {
+                { "@OrganizationId", organizationId }
+            };
+            var queryParams = new DynamicParameters(qParams);
 
+            var query = $@"SELECT TOP {records} r.ReadTimestamp AS RegistryDate, r.WhiteEggsCount AS WhiteEggsCount, r.ColorEggsCount AS ColorEggsCount,
+                        d.UniqueId AS UniqueId, d.[Description] AS DeviceDescription, a.Name AS AssetName
+                            FROM EggRegistry AS r
+                            INNER JOIN Device AS d ON d.Id = r.DeviceId
+                            INNER JOIN Asset AS a ON a.Id = d.AssetId
+                            INNER JOIN Organization AS o ON o.Id = a.OrganizationId
+                        WHERE r.ReadTimeStamp IS NOT NULL
+                        AND o.Id = @OrganizationId
+                        ORDER BY r.ReadTimestamp DESC";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var registries = connection.Query<RegistryEntryDto>(query, qParams);
+                return registries.ToList();
+            }
+        }
+
+        public int GetRegistriesCount(int organizationId)
+        {
+            var qParams = new Dictionary<string, object>
+            {
+                { "@OrganizationId", organizationId }
+            };
+            var queryParams = new DynamicParameters(qParams);
+
+            var query = $@"SELECT COUNT(r.Id)
+                            FROM EggRegistry AS r
+                            INNER JOIN Device AS d ON d.Id = r.DeviceId
+                            INNER JOIN Asset AS a ON a.Id = d.AssetId
+                            INNER JOIN Organization AS o ON o.Id = a.OrganizationId
+                        WHERE o.Id = @OrganizationId";
+
+            using (var connection = _context.CreateConnection())
+            {
+                return connection.ExecuteScalar<int>(query, qParams);
+            }
+        }
     }
 
-    public class RegistryDateTotalsDto
+    public class RegistryEntryDto
     {
         public DateTime RegistryDate { get; set; }
-        public string DeviceId { get; set; }
+        public string UniqueId { get; set; }
         public string DeviceDescription { get; set; }
         public string AssetName { get; set; }
         public int WhiteEggsCount { get; set; }
@@ -80,7 +124,9 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
 
     public interface IEggRegistryReportRepository
     {
-        public Task<IEnumerable<RegistryDateTotalsDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId);
-        public IEnumerable<RegistryDateTotalsDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId);
+        Task<IEnumerable<RegistryEntryDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId);
+        IEnumerable<RegistryEntryDto> GetRegistriesByDate(DateTime startDate, DateTime endDate, IList<int> deviceIds, int organizationId);
+        IEnumerable<RegistryEntryDto> GetLatestRegistries(int organizationId, int records = 200);
+        int GetRegistriesCount(int organizationId);
     }
 }

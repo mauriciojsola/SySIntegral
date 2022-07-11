@@ -1,6 +1,6 @@
 ﻿
 @using SySIntegral.Core.Application.Common.Utils
-@model IList<SySIntegral.Core.Repositories.EggsRegistry.RegistryDateTotalsDto>
+@model IList<SySIntegral.Core.Repositories.EggsRegistry.RegistryEntryDto>
 
 @{
     var dailyGroups = Model.GroupBy(x => x.RegistryDate).ToList();
@@ -76,91 +76,3 @@
 
 
 
-    <ul class="list-group counter-list">
-
-        @*@foreach (var record in Model.ToList())
-            {
-                <li class="list-group-item">
-
-                    <div class="d-flex">
-                        <div class="mr-auto">
-                            @record.Date.ToString("d")
-                            @if (record.Date.IsToday())
-                            {
-                                <span> (hoy)</span>
-                            }
-                            @if (record.Date.IsYesterday())
-                            {
-                                <span> (ayer)</span>
-                            }
-                        </div>
-                        <div class="counter-white rounded text-center">@record.Totals.WhiteEggsCount.ToString("N0")</div>
-                        <div class="counter-color rounded ml-1 text-center">@record.Totals.ColorEggsCount.ToString("N0")</div>
-                    </div>
-
-                </li>
-            }*@
-
-
-
-
-        @*@foreach (var record in Model.ToList())
-            {
-                <li class="list-group-item">
-
-                    <div class="row">
-                        <div class="col-5 col-lg-8">
-                            <div class="mr-auto">
-                                @record.RegistryDate.ToString("d")
-                                @if (record.RegistryDate.IsToday())
-                                {
-                                    <span> (hoy)</span>
-                                }
-                                @if (record.RegistryDate.IsYesterday())
-                                {
-                                    <span> (ayer)</span>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-7 col-lg-4">
-                            <div class="d-flex">
-
-                                <div class="flex-fill text-right justify-content-end">
-                                    <div>@record.WhiteEggsCount.ToString("N0")</div>
-                                    <div class="text-egg-color">@record.ColorEggsCount.ToString("N0")</div>
-                                </div>
-                                <div class=" d-flex flex-fill  text-right justify-content-end"><strong>@((record.WhiteEggsCount + record.ColorEggsCount).ToString("N0"))</strong></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </li>
-            }*@
-
-        @*<li class="list-group-item bg-light">
-
-                <div class="row ">
-                    <div class="col-5 col-lg-8">
-                        <div class="mr-auto">
-                            <h2>TOTAL</h2>
-                        </div>
-                    </div>
-                    <div class="col-7 col-lg-4">
-                        <div class="d-flex">
-                            @{
-                                var totalWhite = Model.Sum(x => x.WhiteEggsCount);
-                                var totalColor = Model.Sum(x => x.ColorEggsCount);
-                                var grandTotal = totalWhite + totalColor;
-                            }
-                            <div class="flex-fill text-right justify-content-end">
-                                <div>@totalWhite.ToString("N0")</div>
-                                <div class="text-egg-color">@totalColor.ToString("N0")</div>
-                            </div>
-                            <div class=" d-flex flex-fill  text-right justify-content-end"><h5><strong>@grandTotal.ToString("N0")</strong></h5></div>
-                        </div>
-                    </div>
-                </div>
-
-            </li>*@
-
-    </ul>
