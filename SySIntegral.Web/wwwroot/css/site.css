@@ -140,6 +140,11 @@ html {
     color: #d48b62;
 }
 
+.counter-summary-total {
+    font-weight: bold;
+}
+
+
 /** Tables customization */
 .table-condensed {
     font-size: 0.9rem;

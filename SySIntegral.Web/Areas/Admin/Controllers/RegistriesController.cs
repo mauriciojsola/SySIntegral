@@ -39,7 +39,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var endDate = DateTime.Now.AbsoluteEnd();
 
             var assetDevices = GetAssetDevices();
-            var dateTotals = GetRegistries(startDate, endDate, assetDevices.SelectMany(x => x.Devices).Select(x => x.Id).Distinct().ToList());
+            var dateTotals = GetRegistries(startDate, endDate, assetDevices.SelectMany(x => x.Devices).Select(x => x.Id).Distinct().ToList()).ToList();
 
             return View(new RegistriesModel
             {
@@ -48,21 +48,9 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 LatestRegistries = _reportRepository.GetLatestRegistries(OrganizationId).ToList(),
                 AssetDevices = assetDevices,
                 DateTotals = dateTotals.ToList(),
+                TodayTotals = GetTodayTotalsBase(dateTotals),
                 TotalRecords = _reportRepository.GetRegistriesCount(OrganizationId)
             });
-        }
-
-        private IList<AssetDevicesModel> GetAssetDevices()
-        {
-            var result = _assetRepository.GetAll().Include(x => x.Devices)
-                .Where(x => x.Organization.Id == OrganizationId).OrderBy(x => x.Name)
-                .Select(x => new AssetDevicesModel
-                {
-                    AssetName = x.Name,
-                    Devices = x.Devices.OrderBy(d => d.Description).Select(m => new DeviceModel { Id = m.Id, Name = m.Description, UniqueId = m.UniqueId }).ToList()
-                }).ToList();
-
-            return result;
         }
 
         [Route("filter")]
@@ -75,6 +63,60 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var dateTotals = GetRegistries(startDate, endDate, deviceIds);
 
             return PartialView("_DailyRegistriesList", dateTotals.ToList());
+        }
+
+        [Route("today-totals")]
+        [HttpPost]
+        public IActionResult GetTodayTotals(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
+        {
+            startDate = startDate?.AbsoluteStart() ?? DateTime.Now.AddDays(ReportDays).AbsoluteStart();
+            endDate = endDate?.AbsoluteEnd() ?? DateTime.Now.AbsoluteEnd();
+            return Json(GetTodayTotalsBase(GetRegistries(startDate, endDate, deviceIds).ToList()));
+        }
+
+
+        [Route("latest")]
+        [HttpPost]
+        public IActionResult GetLatestRegistries()
+        {
+            var model = new RegistriesModel
+            {
+                LatestRegistries = _reportRepository.GetLatestRegistries(OrganizationId).ToList(),
+                TotalRecords = _reportRepository.GetRegistriesCount(OrganizationId)
+            };
+            return PartialView("_RegistriesList", model);
+        }
+
+        private RegistryEntryDto GetTodayTotalsBase(IList<RegistryEntryDto> dateTotals)
+        {
+            var latestRegistry = dateTotals.OrderByDescending(x => x.RegistryDate).FirstOrDefault();
+            if (latestRegistry == null) return new RegistryEntryDto
+            {
+                WhiteEggsCount = 0,
+                ColorEggsCount = 0,
+                RegistryDate = DateTime.Now
+            };
+
+            var latestData = dateTotals.Where(x => x.RegistryDate == latestRegistry.RegistryDate).ToList();
+            return new RegistryEntryDto
+            {
+                WhiteEggsCount = latestData.Sum(x => x.WhiteEggsCount),
+                ColorEggsCount = latestData.Sum(x => x.ColorEggsCount),
+                RegistryDate = latestRegistry.RegistryDate
+            };
+        }
+
+        private IList<AssetDevicesModel> GetAssetDevices()
+        {
+            var result = _assetRepository.GetAll().Include(x => x.Devices)
+                 .Where(x => x.Organization.Id == OrganizationId).OrderBy(x => x.Name)
+                 .Select(x => new AssetDevicesModel
+                 {
+                     AssetName = x.Name,
+                     Devices = x.Devices.OrderBy(d => d.Description).Select(m => new DeviceModel { Id = m.Id, Name = m.Description, UniqueId = m.UniqueId }).ToList()
+                 }).ToList();
+
+            return result;
         }
 
         private IEnumerable<RegistryEntryDto> GetRegistries(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
@@ -114,29 +156,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             public IList<RegistryEntryDto> LatestRegistries { get; set; }
             public int TotalRecords { get; set; }
             public IList<RegistryEntryDto> DateTotals { get; set; }
-
-            public RegistryEntryDto TodayTotals
-            {
-                get
-                {
-                    var latestRegistry = DateTotals.OrderByDescending(x => x.RegistryDate).FirstOrDefault();
-                    if (latestRegistry == null) return new RegistryEntryDto
-                    {
-                        WhiteEggsCount = 0,
-                        ColorEggsCount = 0,
-                        RegistryDate = DateTime.Now
-                    };
-
-                    var latestData = DateTotals.Where(x => x.RegistryDate == latestRegistry.RegistryDate).ToList();
-                    return new RegistryEntryDto
-                    {
-                        WhiteEggsCount = latestData.Sum(x => x.WhiteEggsCount),
-                        ColorEggsCount = latestData.Sum(x => x.ColorEggsCount),
-                        RegistryDate = latestRegistry.RegistryDate
-                    };
-                }
-            }
-
+            public RegistryEntryDto TodayTotals { get; set; }
             public IList<AssetDevicesModel> AssetDevices { get; set; }
         }
     }

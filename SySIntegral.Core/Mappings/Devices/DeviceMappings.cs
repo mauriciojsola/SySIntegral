@@ -20,14 +20,25 @@ namespace SySIntegral.Core.Mappings.Devices
                 .HasColumnType("int")
                 .ValueGeneratedOnAdd()
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn); //.UseIdentityColumn();
-            
+
             entity.HasKey(u => u.Id);
-            
+
+            entity.HasDiscriminator(b => b.DeviceType);
+            entity.HasDiscriminator<DeviceType>("DeviceType")
+                .HasValue<CollectorDevice>(DeviceType.Collector)
+                .HasValue<LineDevice>(DeviceType.Line)
+                .HasValue<CounterDevice>(DeviceType.Counter);
+
+            entity.Property(e => e.DeviceType)
+                .HasColumnName("DeviceType")
+                .HasColumnType("int")
+                .IsRequired();
+
             entity.Property(p => p.Description)
                 .HasColumnType("nvarchar(100)")
                 .HasMaxLength(100)
                 .IsRequired();
-            
+
             entity.Property(p => p.UniqueId)
                 .HasColumnType("nvarchar(100)")
                 .HasMaxLength(100)

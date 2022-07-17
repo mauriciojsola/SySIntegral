@@ -49,7 +49,7 @@ namespace SySIntegral.Core.Test
                 assetRepo.Insert(asset);
                 var assets = assetRepo.GetAll().ToList();
 
-                var device = new Device
+                var device = new CounterDevice
                 {
                     Asset = asset,
                     Description = "DEVICE ONE",

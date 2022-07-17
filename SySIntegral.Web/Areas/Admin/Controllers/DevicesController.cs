@@ -100,7 +100,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             {
                 var device = model.Id > 0
                     ? _deviceRepository.GetById(model.Id)
-                    : new Device();
+                    : new CounterDevice();
 
                 if (device != null)
                 {

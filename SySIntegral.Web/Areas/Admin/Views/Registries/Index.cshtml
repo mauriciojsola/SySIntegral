@@ -18,7 +18,7 @@
             <div class="card mr-1 counter counter-white">
                 <div class="card-body">
                     @*<h5 class="card-title text-center">Blancos</h5>*@
-                    <h2 class="card-text text-center"><strong>@todaysWhiteCounter.ToString("N0")</strong></h2>
+                    <h2 class="card-text text-center counter-summary-total" id="todaysWhiteCounter">@todaysWhiteCounter.ToString("N0")</h2>
 
                 </div>
             </div>
@@ -27,7 +27,7 @@
             <div class="card ml-1 counter counter-color">
                 <div class="card-body">
                     @*<h5 class="card-title text-center">Color</h5>*@
-                    <h2 class="card-text text-center"><strong>@todaysColorCounter.ToString("N0")</strong></h2>
+                    <h2 class="card-text text-center counter-summary-total" id="todaysColorCounter">@todaysColorCounter.ToString("N0")</h2>
                 </div>
             </div>
         </div>
@@ -37,8 +37,7 @@
             <div class="card mt-1 counter counter-white">
                 <div class="card-body">
                     <h6 class="text-center m-0">TOTAL</h6>
-                    <h1 class="card-text text-center"><strong>@totalSum.ToString("N0")</strong></h1>
-
+                    <h1 class="card-text text-center counter-summary-total" id="todaysTotalCounter">@totalSum.ToString("N0")</h1>
                 </div>
             </div>
         </div>
@@ -64,20 +63,18 @@
 
                     @foreach (var a in Model.AssetDevices.ToList())
                     {
-                    <optgroup label="@a.AssetName">
-                        @foreach (var d in a.Devices.ToList())
+                        <optgroup label="@a.AssetName">
+                            @foreach (var d in a.Devices.ToList())
                             {
-                        <option value="@(d.Id)" selected="selected">@(d.Name)</option>
+                                <option value="@(d.Id)" selected="selected">@(d.Name)</option>
                             }
-                    </optgroup>
+                        </optgroup>
                     }
 
                 </select>
             </div>
         </div>
     </div>
-
-
 
     <hr />
     <h3>Totales Por Día</h3>
@@ -88,34 +85,11 @@
     </div>
 
     <hr />
-    <h3>Últimos Registros</h3>
-    Mostrando @Model.LatestRegistries.Count de @Model.TotalRecords registros.
-    <div class="table-responsive-md">
-        <table class="table table-striped table-bordered table-sm table-condensed">
-            <thead>
-                <tr>
-                    <th>Dispositivo</th>
-                    <th>Huevos Blancos</th>
-                    <th>Huevos Color</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var record in Model.LatestRegistries)
-                {
-                <tr>
-                    <td style="font-size: 12px;" class="pl-1">
-                        <div>@record.UniqueId</div>
-                        <div>(@record.DeviceDescription)</div>
-                    </td>
-                    <td>@record.WhiteEggsCount</td>
-                    <td>@record.ColorEggsCount</td>
-                    <td>@(record.RegistryDate.ToString("g"))</td>
-                </tr>
-                }
-            </tbody>
-        </table>
+    
+    <div id="registriesContainer">
+        <partial name="_RegistriesList" model="Model" />
     </div>
+    
 
 </div>
 @section Scripts
@@ -131,7 +105,7 @@
         $(document).ready(function () {
 
             $('#RefreshPage').click(function () {
-                console.debug("refreshing");
+                console.debug("refreshing...");
                 updateReport();
                 //window.location.reload();
             });
@@ -264,6 +238,30 @@
             }).done(function (data, status) {
                 //console.debug("Data: ", data, status);
                 $('#dailyRegistriesContainer').html(data);
+                updateTotals();
+                updateRegistries();
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });           
+
+        }
+
+        function updateTotals() {
+            let dateRange = getDateRange();
+
+            $.post("Registries/today-totals", {
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                deviceIds: getDevices()
+            }).done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#todaysWhiteCounter').text(data.whiteEggsCount.toLocaleString('es-AR'));
+                $('#todaysColorCounter').text(data.colorEggsCount.toLocaleString('es-AR'));
+                $('#todaysTotalCounter').text((data.whiteEggsCount + data.colorEggsCount).toLocaleString('es-AR'));
             })
                 .fail(function (error) {
                     console.debug('Error:', error);
@@ -273,6 +271,21 @@
                 });;
         }
         
+        function updateRegistries() {
+            let dateRange = getDateRange();
+
+            $.post("Registries/latest").done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#registriesContainer').html(data);
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });;
+        }
+
         $(document).ajaxStart(function () {
             $.blockUI({
                 css: {
@@ -292,7 +305,7 @@
             });
 
         }).ajaxStop($.unblockUI);
-        
+
 
     </script>
 
