@@ -12,7 +12,7 @@ namespace SySIntegral.Core.Entities.EggsRegistry
         }
 
         public int DeviceId { get; set; }
-        public virtual Device Device { get; set; }
+        public virtual InputDevice Device { get; set; }
 
         //public string OldDeviceId { get; set; }
         public DateTime Timestamp { get; set; }

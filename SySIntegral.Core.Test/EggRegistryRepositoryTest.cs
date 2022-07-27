@@ -30,7 +30,7 @@ namespace SySIntegral.Core.Test
             using (var context = new ApplicationDbContext(options))
             {
                 var repo = new EggRegistryRepository(context);
-                var devices = new DeviceRepository(context);
+                var devices = new InputDeviceRepository(context);
 
                 repo.Insert(new EggRegistry
                 {

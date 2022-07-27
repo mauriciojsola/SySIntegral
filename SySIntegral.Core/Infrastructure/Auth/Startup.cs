@@ -53,7 +53,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IAssetRepository, AssetRepository>();
-            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IInputDeviceRepository, InputDeviceRepository>();
             services.AddScoped<IEggRegistryReportRepository, EggRegistryReportRepository>();
 
             return services;

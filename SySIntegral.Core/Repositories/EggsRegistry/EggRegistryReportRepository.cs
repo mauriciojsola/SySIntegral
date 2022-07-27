@@ -22,12 +22,12 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             startDate = startDate.AbsoluteStart();
             endDate = endDate.AbsoluteEnd();
 
-            var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate,r.DeviceId AS UniqueId, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount
+            var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate,r.InputDeviceId AS UniqueId, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount
                           FROM EggRegistry AS r
                         WHERE r.ReadTimeStamp IS NOT NULL
                         AND r.ReadTimestamp BETWEEN '{startDate:yyyy-MM-dd hh:mm}' AND '{endDate:yyyy-MM-dd hh:mm}'
-                        GROUP BY CAST(r.ReadTimestamp as DATE), r.DeviceId
-                        ORDER BY CAST(r.ReadTimestamp as DATE), r.DeviceId";
+                        GROUP BY CAST(r.ReadTimestamp as DATE), r.InputDeviceId
+                        ORDER BY CAST(r.ReadTimestamp as DATE), r.InputDeviceId";
 
             using (var connection = _context.CreateConnection())
             {
@@ -48,7 +48,7 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             var query = $@"SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
                         d.UniqueId AS UniqueId, d.[Description] AS DeviceDescription, a.Name AS AssetName
                             FROM EggRegistry AS r
-                            INNER JOIN Device AS d ON d.Id = r.DeviceId
+                            INNER JOIN InputDevice AS d ON d.Id = r.InputDeviceId
                             INNER JOIN Asset AS a ON a.Id = d.AssetId
                             INNER JOIN Organization AS o ON o.Id = a.OrganizationId
                         WHERE r.ReadTimeStamp IS NOT NULL
@@ -76,7 +76,7 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
             var query = $@"SELECT TOP {records} r.ReadTimestamp AS RegistryDate, r.WhiteEggsCount AS WhiteEggsCount, r.ColorEggsCount AS ColorEggsCount,
                         d.UniqueId AS UniqueId, d.[Description] AS DeviceDescription, a.Name AS AssetName
                             FROM EggRegistry AS r
-                            INNER JOIN Device AS d ON d.Id = r.DeviceId
+                            INNER JOIN InputDevice AS d ON d.Id = r.InputDeviceId
                             INNER JOIN Asset AS a ON a.Id = d.AssetId
                             INNER JOIN Organization AS o ON o.Id = a.OrganizationId
                         WHERE r.ReadTimeStamp IS NOT NULL
@@ -100,7 +100,7 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
 
             var query = $@"SELECT COUNT(r.Id)
                             FROM EggRegistry AS r
-                            INNER JOIN Device AS d ON d.Id = r.DeviceId
+                            INNER JOIN InputDevice AS d ON d.Id = r.InputDeviceId
                             INNER JOIN Asset AS a ON a.Id = d.AssetId
                             INNER JOIN Organization AS o ON o.Id = a.OrganizationId
                         WHERE o.Id = @OrganizationId";

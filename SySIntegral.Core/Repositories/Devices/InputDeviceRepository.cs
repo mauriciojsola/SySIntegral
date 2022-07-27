@@ -9,26 +9,26 @@ using SySIntegral.Core.Entities.Organizations;
 
 namespace SySIntegral.Core.Repositories.Devices
 {
-    public class DeviceRepository : GenericRepository<Device>, IDeviceRepository
+    public class InputDeviceRepository : GenericRepository<InputDevice>, IInputDeviceRepository
     {
-        public DeviceRepository(ApplicationDbContext context) : base(context)
+        public InputDeviceRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public Device GetByDescription(string description, int organizationId)
+        public InputDevice GetByDescription(string description, int organizationId)
         {
             return GetAll().FirstOrDefault(x => x.Description == description && x.Asset.Organization.Id == organizationId); 
         }
 
-        public Device GetByUniqueID(string uniqueId)
+        public InputDevice GetByUniqueID(string uniqueId)
         {
             return GetAll().FirstOrDefault(x => x.UniqueId == uniqueId); 
         }
     }
 
-    public interface IDeviceRepository : IRepository<Device>
+    public interface IInputDeviceRepository : IRepository<InputDevice>
     {
-        Device GetByDescription(string description, int organizationId);
-        Device GetByUniqueID(string uniqueId);
+        InputDevice GetByDescription(string description, int organizationId);
+        InputDevice GetByUniqueID(string uniqueId);
     }
 }

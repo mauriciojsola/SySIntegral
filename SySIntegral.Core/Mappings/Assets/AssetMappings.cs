@@ -34,7 +34,7 @@ namespace SySIntegral.Core.Mappings.Assets
             entity.HasIndex(u => u.OrganizationId)
                 .HasName("IX_OrganizationId");
 
-            entity.HasMany<Device>(x => x.Devices)
+            entity.HasMany<InputDevice>(x => x.Devices)
                 .WithOne(x => x.Asset).HasForeignKey(x => x.AssetId).IsRequired();
 
         }

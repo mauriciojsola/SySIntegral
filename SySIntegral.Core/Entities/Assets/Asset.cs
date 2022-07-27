@@ -10,12 +10,12 @@ namespace SySIntegral.Core.Entities.Assets
     {
         public Asset()
         {
-            Devices = new List<Device>();
+            Devices = new List<InputDevice>();
         }
 
         public int OrganizationId { get; set; }
         public virtual Organization Organization { get; set; }
         public string Name { get; set; }
-        public virtual ICollection<Device> Devices { get; set; }
+        public virtual ICollection<InputDevice> Devices { get; set; }
     }
 }

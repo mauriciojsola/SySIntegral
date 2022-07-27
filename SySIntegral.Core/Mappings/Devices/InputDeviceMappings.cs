@@ -9,12 +9,12 @@ using SySIntegral.Core.Entities.Devices;
 
 namespace SySIntegral.Core.Mappings.Devices
 {
-    public class DeviceMappings : IEntityTypeConfiguration<Device>
+    public class InputDeviceMappings : IEntityTypeConfiguration<InputDevice>
     {
-        public void Configure(EntityTypeBuilder<Device> entity)
+        public void Configure(EntityTypeBuilder<InputDevice> entity)
         {
             // Maps to the corresponding table
-            entity.ToTable("Device");
+            entity.ToTable("InputDevice");
 
             entity.Property(p => p.Id)
                 .HasColumnType("int")
@@ -22,17 +22,6 @@ namespace SySIntegral.Core.Mappings.Devices
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn); //.UseIdentityColumn();
 
             entity.HasKey(u => u.Id);
-
-            entity.HasDiscriminator(b => b.DeviceType);
-            entity.HasDiscriminator<DeviceType>("DeviceType")
-                .HasValue<CollectorDevice>(DeviceType.Collector)
-                .HasValue<LineDevice>(DeviceType.Line)
-                .HasValue<CounterDevice>(DeviceType.Counter);
-
-            entity.Property(e => e.DeviceType)
-                .HasColumnName("DeviceType")
-                .HasColumnType("int")
-                .IsRequired();
 
             entity.Property(p => p.Description)
                 .HasColumnType("nvarchar(100)")

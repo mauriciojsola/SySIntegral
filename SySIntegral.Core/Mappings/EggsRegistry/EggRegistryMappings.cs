@@ -47,7 +47,7 @@ namespace SySIntegral.Core.Mappings.EggsRegistry
             entity.Property(p => p.ExportTimestamp)
                 .HasColumnType("datetime2");
 
-            entity.HasOne<Device>(x => x.Device);
+            entity.HasOne<InputDevice>(x => x.Device);
 
             entity.ToTable("EggRegistry");
             

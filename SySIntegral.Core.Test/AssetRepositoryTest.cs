@@ -32,7 +32,7 @@ namespace SySIntegral.Core.Test
             {
                 var orgRepo = new OrganizationRepository(context);
                 var assetRepo = new AssetRepository(context);
-                var deviceRepo = new DeviceRepository(context);
+                var deviceRepo = new InputDeviceRepository(context);
 
                 var org = new Organization {Name = "TEST Org"};
                 orgRepo.Insert(org);
@@ -49,7 +49,7 @@ namespace SySIntegral.Core.Test
                 assetRepo.Insert(asset);
                 var assets = assetRepo.GetAll().ToList();
 
-                var device = new CounterDevice
+                var device = new InputDevice
                 {
                     Asset = asset,
                     Description = "DEVICE ONE",

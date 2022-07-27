@@ -20,13 +20,13 @@ namespace SySIntegral.Web.Areas.Api.Controllers
     {
         private readonly ILogger<EggCounterController> _logger;
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
-        private readonly IDeviceRepository _deviceRepository;
+        private readonly IInputDeviceRepository _inputDeviceRepository;
 
-        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository, IDeviceRepository deviceRepository)
+        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository, IInputDeviceRepository inputDeviceRepository)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
-            _deviceRepository = deviceRepository;
+            _inputDeviceRepository = inputDeviceRepository;
         }
 
         [HttpGet]
@@ -50,7 +50,7 @@ namespace SySIntegral.Web.Areas.Api.Controllers
 
             if (!readTimestamp.HasValue) return BadRequest($"La fecha de lectura tiene formato incorrecto. Debe ser YYYYMMDDHHMMSS.");
 
-            var device = _deviceRepository.GetByUniqueID(data.DeviceId);
+            var device = _inputDeviceRepository.GetByUniqueID(data.DeviceId);
             if (device == null) return BadRequest($"No existe un dispositivo registrado con ID {data.DeviceId}.");
 
             var reg = new EggRegistry

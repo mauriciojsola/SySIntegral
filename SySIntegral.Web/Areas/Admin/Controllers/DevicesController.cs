@@ -23,24 +23,24 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     {
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IAssetRepository _assetRepository;
-        private readonly IDeviceRepository _deviceRepository;
+        private readonly IInputDeviceRepository _inputDeviceRepository;
         private readonly ILogger<DevicesController> _logger;
 
-        public DevicesController(IOrganizationRepository organizationRepository, IAssetRepository assetRepository, IDeviceRepository deviceRepository, ILogger<DevicesController> logger)
+        public DevicesController(IOrganizationRepository organizationRepository, IAssetRepository assetRepository, IInputDeviceRepository inputDeviceRepository, ILogger<DevicesController> logger)
         {
             _logger = logger;
             _organizationRepository = organizationRepository;
             _assetRepository = assetRepository;
-            _deviceRepository = deviceRepository;
+            _inputDeviceRepository = inputDeviceRepository;
         }
 
         [Route("")]
         public IActionResult Index()
         {
             var devices = IsLimitedByOrganization
-                ? _deviceRepository.GetAll().Where(x => x.Asset.Organization.Id == OrganizationId).Include(x => x.Asset).ThenInclude(x => x.Organization)
+                ? _inputDeviceRepository.GetAll().Where(x => x.Asset.Organization.Id == OrganizationId).Include(x => x.Asset).ThenInclude(x => x.Organization)
                     .OrderBy(x => x.Asset.Organization.Name).ThenBy(x => x.Asset.Name).ThenBy(x => x.Description).ToList()
-                : _deviceRepository.GetAll().Include(x => x.Asset).ThenInclude(x => x.Organization)
+                : _inputDeviceRepository.GetAll().Include(x => x.Asset).ThenInclude(x => x.Organization)
                     .OrderBy(x => x.Asset.Organization.Name).ThenBy(x => x.Asset.Name).ThenBy(x => x.Description).ToList();
 
             return View(devices);
@@ -65,7 +65,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var model = TempData.Get<CreateDeviceViewModel>(TempDataKey) ?? new CreateDeviceViewModel();
             InitModel(model);
 
-            var device = _deviceRepository.GetById(id);
+            var device = _inputDeviceRepository.GetById(id);
 
             if (device != null)
             {
@@ -99,8 +99,8 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             try
             {
                 var device = model.Id > 0
-                    ? _deviceRepository.GetById(model.Id)
-                    : new CounterDevice();
+                    ? _inputDeviceRepository.GetById(model.Id)
+                    : new InputDevice();
 
                 if (device != null)
                 {
@@ -110,11 +110,11 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
 
                     if (model.Id > 0)
                     {
-                        _deviceRepository.Update(device);
+                        _inputDeviceRepository.Update(device);
                     }
                     else
                     {
-                        _deviceRepository.Insert(device);
+                        _inputDeviceRepository.Insert(device);
                     }
                 }
                 else
@@ -169,13 +169,13 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
                 errors.Add("La Descripción del dispositivo es requerida");
             }
 
-            var device = _deviceRepository.GetByDescription(model.Description, model.SelectedOrganizationId);
+            var device = _inputDeviceRepository.GetByDescription(model.Description, model.SelectedOrganizationId);
             if (device != null && device.Id != model.Id)
             {
                 errors.Add("Un Dispositivo con el mismo nombre ya existe");
             }
 
-            device = _deviceRepository.GetByUniqueID(model.UniqueId);
+            device = _inputDeviceRepository.GetByUniqueID(model.UniqueId);
             if (device != null && device.Id != model.Id)
             {
                 errors.Add("Un Dispositivo con el mismo ID ya existe");
@@ -191,14 +191,14 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         {
             try
             {
-                var device = _deviceRepository.GetById(id);
+                var device = _inputDeviceRepository.GetById(id);
 
                 if (device != null)
                 {
                     if (IsLimitedByOrganization && device.Asset.Organization.Id != OrganizationId)
                         return Unauthorized("Usted no está autorizado a eliminar éste Dispositivo");
 
-                    _deviceRepository.Delete(device);
+                    _inputDeviceRepository.Delete(device);
                 }
                 else
                     AddErrors("Dispositivo no encontrada");

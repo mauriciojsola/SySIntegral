@@ -12,11 +12,11 @@ namespace SySIntegral.Web.Areas.Admin.Views.Assets
 {
     public class DevicesListViewComponent  : ViewComponent
     {
-        private readonly IDeviceRepository _deviceRepository;
+        private readonly IInputDeviceRepository _inputDeviceRepository;
 
-        public DevicesListViewComponent (IDeviceRepository deviceRepository)
+        public DevicesListViewComponent (IInputDeviceRepository inputDeviceRepository)
         {
-            _deviceRepository = deviceRepository;
+            _inputDeviceRepository = inputDeviceRepository;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(int assetId)
@@ -25,9 +25,9 @@ namespace SySIntegral.Web.Areas.Admin.Views.Assets
             return View(items);
         }
 
-        private Task<List<Device>> GetDevicesAsync(int assetId)
+        private Task<List<InputDevice>> GetDevicesAsync(int assetId)
         {
-            return _deviceRepository.GetAll().Where(x => x.Asset.Id == assetId)
+            return _inputDeviceRepository.GetAll().Where(x => x.Asset.Id == assetId)
                 .Include(x => x.Asset).ToListAsync();
         }
     }
