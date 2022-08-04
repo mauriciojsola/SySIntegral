@@ -4,19 +4,19 @@ using System.Text;
 
 namespace SySIntegral.Core.Entities.Devices
 {
-    public class ManualCounterDevice : CounterDevice
+    public class SimpleCheckPoint : CheckPoint
     {
-        public ManualCounterDevice()
+        public SimpleCheckPoint()
         {
-            CounterDeviceType = CounterDeviceType.Manual;
+            CheckPointType = CheckPointType.Simple;
         }
 
-        public override void AddChildren(CounterDevice children)
+        public override void AddChildren(CheckPoint children)
         {
             throw new NotImplementedException();
         }
 
-        public override void RemoveChildren(CounterDevice children)
+        public override void RemoveChildren(CheckPoint children)
         {
             throw new NotImplementedException();
         }

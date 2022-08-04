@@ -9,6 +9,7 @@ using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
+using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
 
@@ -22,19 +23,26 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         private readonly ILogger<RegistriesController> _logger;
         private readonly IEggRegistryReportRepository _reportRepository;
         private readonly IAssetRepository _assetRepository;
+        private readonly ICheckPointRepository _checkPointRepository;
 
         private const int ReportDays = -6;
 
-        public RegistriesController(IEggRegistryReportRepository reportRepository, IAssetRepository assetRepository, ILogger<RegistriesController> logger)
+        public RegistriesController(IEggRegistryReportRepository reportRepository, 
+            IAssetRepository assetRepository, 
+            ICheckPointRepository checkPointRepository,
+            ILogger<RegistriesController> logger)
         {
             _logger = logger;
             _reportRepository = reportRepository;
             _assetRepository = assetRepository;
+            _checkPointRepository = checkPointRepository;
         }
 
         [Route("")]
         public IActionResult Index()
         {
+            var checkPoints = _checkPointRepository.GetAll().ToList();
+
             var startDate = DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             var endDate = DateTime.Now.AbsoluteEnd();
 

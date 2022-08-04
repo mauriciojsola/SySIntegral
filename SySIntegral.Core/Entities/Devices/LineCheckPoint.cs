@@ -5,26 +5,27 @@ using System.Text;
 
 namespace SySIntegral.Core.Entities.Devices
 {
-    public class AggregatorCounterDevice : CounterDevice
+    public class LineCheckPoint : CheckPoint
     {
-        public AggregatorCounterDevice()
+        public LineCheckPoint()
         {
-            CounterDeviceType = CounterDeviceType.Aggregator;
+            CheckPointType = CheckPointType.Line;
         }
 
-        public override void AddChildren(CounterDevice children)
+        public override void AddChildren(CheckPoint children)
         {
             throw new NotImplementedException();
         }
 
-        public override void RemoveChildren(CounterDevice children)
+        public override void RemoveChildren(CheckPoint children)
         {
             throw new NotImplementedException();
         }
 
         public override int Count()
         {
-            return Children.Sum(counter => counter.Count());
+            return 0; //Children.Any() ? Children.OrderBy(x => x.SortOrder).First().Count() : 0;
         }
     }
+
 }
