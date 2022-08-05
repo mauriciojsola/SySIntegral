@@ -1,0 +1,69 @@
+﻿@using SySIntegral.Core.Entities.Devices
+@using Microsoft.AspNetCore.Html
+@model List<SySIntegral.Core.Entities.Devices.CheckPoint>
+@{
+    ViewData["Title"] = "Puntos de Control";
+}
+
+<h1>Puntos de Control</h1>
+<hr />
+@*<a class="btn btn-primary btn-sm" asp-area="Admin" asp-controller="CheckPoints" asp-action="Create">Crear Punto de Control</a>*@
+
+
+
+@foreach (var checkPoint in Model.Where(x => x.CheckPointType == CheckPointType.Aggregator))
+{
+    <ul class="list-group flex-column flex-md-row">
+        <li class="list-group-item text-center">
+            <div><i class="bi bi-grid-3x3-gap" style="display: inline-block;"></i> <span style="display: inline-block;">@checkPoint.Description</span></div>
+        </li>
+
+        @{
+            ShowTree(checkPoint.Children.ToList());
+        }
+    </ul>
+
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No se encontraron puntos de control.</div>
+}
+
+@functions {
+    private void ShowTree(List<CheckPoint> menusList)
+    {
+        if (menusList != null)
+        {
+            foreach (var item in menusList)
+            {
+                <li class="list-group-item border-sm-left-0 border-sm-right-0 border-md-0 text-center"><i class="bi bi-arrow-left d-none d-md-block"></i><i class="bi bi-arrow-up d-md-none"></i></li>
+                <li class="list-group-item text-center"><div><i class="bi bi-arrow-left-square" style="display: inline-block;"></i> <span style="display: inline-block;">@item.Description</span></div></li>
+
+                @if (item.Children.Any())
+                {
+                    ShowTree(item.Children.ToList());
+                }
+            }
+        }
+    }
+
+    private void ShowTree2(List<CheckPoint> menusList)
+    {
+        if (menusList != null)
+        {
+            foreach (var item in menusList)
+            {
+                <div class="card pt-4 pb-4 ml-1 border-0"><i class="bi bi-arrow-left"></i></div><div class="card p-4">@item.Description</div>
+                @if (item.Children.Any())
+                {
+
+                    ShowTree2(item.Children.ToList());
+
+
+
+                }
+            }
+        }
+    }
+}

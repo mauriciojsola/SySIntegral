@@ -41,7 +41,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            var checkPoints = _checkPointRepository.GetAll().ToList();
+            //var checkPoints = _checkPointRepository.GetAll().ToList();
 
             var startDate = DateTime.Now.AddDays(ReportDays).AbsoluteStart();
             var endDate = DateTime.Now.AbsoluteEnd();
