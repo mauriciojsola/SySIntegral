@@ -34,7 +34,7 @@ namespace SySIntegral.Core.Test
 
                 repo.Insert(new EggRegistry
                 {
-                    DeviceId = 1,
+                    InputDeviceId = 1,
                     Timestamp = DateTime.Today,
                     WhiteEggsCount = 1500,
                     //ColorEggsCount = 689

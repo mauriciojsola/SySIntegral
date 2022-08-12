@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SySIntegral.Core.Entities.Devices;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Web.Common.Filters;
@@ -21,12 +23,17 @@ namespace SySIntegral.Web.Areas.Api.Controllers
         private readonly ILogger<EggCounterController> _logger;
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly IInputDeviceRepository _inputDeviceRepository;
+        private readonly ICheckPointRepository _checkPointRepository;
 
-        public EggCounterController(ILogger<EggCounterController> logger, IRepository<EggRegistry> eggRegistryRepository, IInputDeviceRepository inputDeviceRepository)
+        public EggCounterController(ILogger<EggCounterController> logger, 
+            IRepository<EggRegistry> eggRegistryRepository, 
+            IInputDeviceRepository inputDeviceRepository,
+            ICheckPointRepository checkPointRepository)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
             _inputDeviceRepository = inputDeviceRepository;
+            _checkPointRepository = checkPointRepository;
         }
 
         [HttpGet]
@@ -65,6 +72,19 @@ namespace SySIntegral.Web.Areas.Api.Controllers
             };
             _eggRegistryRepository.Insert(reg);
 
+            var checkPoint = _checkPointRepository.GetByInputDevice(device.Id);
+            if (checkPoint != null)
+            {
+                checkPoint.Countings.Add(new CheckPointCount
+                {
+                    Registry = reg,
+                    EggRegistryId = reg.Id,
+                    CheckPoint = checkPoint,
+                    CheckPointId = checkPoint.Id
+                });
+                _checkPointRepository.Update(checkPoint);
+            }
+            
             return Ok(data);
         }
 

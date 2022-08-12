@@ -22,11 +22,11 @@ namespace SySIntegral.Core.Mappings.EggsRegistry
             //    .HasMaxLength(100)
             //    .IsRequired();
 
-            entity.Property(u => u.DeviceId)
+            entity.Property(u => u.InputDeviceId)
                 .HasColumnType("int")
                 .IsRequired();
 
-            entity.HasIndex(u => u.DeviceId)
+            entity.HasIndex(u => u.InputDeviceId)
                 .HasName("IX_DeviceId");
 
             entity.Property(p => p.Timestamp)

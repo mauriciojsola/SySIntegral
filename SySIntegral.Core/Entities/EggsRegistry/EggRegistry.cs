@@ -11,7 +11,7 @@ namespace SySIntegral.Core.Entities.EggsRegistry
         {
         }
 
-        public int DeviceId { get; set; }
+        public int InputDeviceId { get; set; }
         public virtual InputDevice Device { get; set; }
 
         //public string OldDeviceId { get; set; }
