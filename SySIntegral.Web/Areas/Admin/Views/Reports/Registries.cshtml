@@ -1,0 +1,88 @@
+﻿<div class="chartMenu">
+    <p>Prueba de Gráfico</p>
+</div>
+<div class="chartCard">
+    <div class="chartBox">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc/chartjs-plugin-datalabels.min.js" integrity="sha512-5L00nKlyvEYuI4nju08bVuNEJEU8HbmG8fDGFbzt1HeZcgmBV5EuZz+HJ9au/6Ixvjddun6ZNwkRcclIlyviXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+    const labels = [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+
+    ];
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Conteos 2022',
+            datalabels: {
+                color: '#444444',
+                anchor: 'end',
+                align: 'start',
+                offset: 10,
+                formatter: function (value, context) {
+                    let formatter = new Intl.NumberFormat('es-AR', {});
+                    return formatter.format(value); //Number((value).toFixed(0)).toLocaleString();
+                }
+            },
+            backgroundColor: '#d9d2e9',
+            borderColor: [
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                'blue',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                '#d9d2e9',
+                'red',
+                
+            ],
+            borderWidth: 1,
+            data: [120254, 135247, 100002, 189665, 156569, 110250, 201230, 145000, 147747,115000,197582, 98758],
+        }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        plugins: [ChartDataLabels],
+        options: {
+            scaleShowValues: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+    
+  
+    
+
+    </script>

@@ -7,7 +7,7 @@ using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Entities.EggsRegistry;
 
-namespace SySIntegral.Core.Repositories.EggsRegistry
+namespace SySIntegral.Core.Repositories.Reports
 {
     public class EggRegistryReportRepository : IEggRegistryReportRepository
     {
@@ -121,7 +121,7 @@ namespace SySIntegral.Core.Repositories.EggsRegistry
         public int WhiteEggsCount { get; set; }
         public int ColorEggsCount { get; set; }
     }
-
+    
     public interface IEggRegistryReportRepository
     {
         Task<IEnumerable<RegistryEntryDto>> GetRegistriesByDateAsync(DateTime startDate, DateTime endDate, int organizationId);

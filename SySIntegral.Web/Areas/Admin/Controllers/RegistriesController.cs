@@ -11,7 +11,7 @@ using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
-using SySIntegral.Core.Repositories.EggsRegistry;
+using SySIntegral.Core.Repositories.Reports;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
 {

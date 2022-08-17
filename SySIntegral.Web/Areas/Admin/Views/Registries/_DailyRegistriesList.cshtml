@@ -1,6 +1,6 @@
 ﻿
 @using SySIntegral.Core.Application.Common.Utils
-@model IList<SySIntegral.Core.Repositories.EggsRegistry.RegistryEntryDto>
+@model IList<SySIntegral.Core.Repositories.Reports.RegistryEntryDto>
 
 @{
     var dailyGroups = Model.GroupBy(x => x.RegistryDate).ToList();

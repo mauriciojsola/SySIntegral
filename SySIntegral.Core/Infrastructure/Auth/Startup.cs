@@ -16,8 +16,8 @@ using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
-using SySIntegral.Core.Repositories.EggsRegistry;
 using SySIntegral.Core.Repositories.Organizations;
+using SySIntegral.Core.Repositories.Reports;
 
 namespace SySIntegral.Core.Infrastructure.Auth
 {
@@ -57,6 +57,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
             services.AddScoped<IInputDeviceRepository, InputDeviceRepository>();
             services.AddScoped<ICheckPointRepository, CheckPointRepository>();
             services.AddScoped<IEggRegistryReportRepository, EggRegistryReportRepository>();
+            services.AddScoped<ICheckPointCountingsReportRepository, CheckPointCountingsReportRepository>();
 
             return services;
         }
