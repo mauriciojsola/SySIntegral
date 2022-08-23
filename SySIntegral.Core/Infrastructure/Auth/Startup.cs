@@ -57,7 +57,7 @@ namespace SySIntegral.Core.Infrastructure.Auth
             services.AddScoped<IInputDeviceRepository, InputDeviceRepository>();
             services.AddScoped<ICheckPointRepository, CheckPointRepository>();
             services.AddScoped<IEggRegistryReportRepository, EggRegistryReportRepository>();
-            services.AddScoped<ICheckPointCountingsReportRepository, CheckPointCountingsReportRepository>();
+            services.AddScoped<ICheckPointCountingReportRepository, CheckPointCountingReportRepository>();
 
             return services;
         }

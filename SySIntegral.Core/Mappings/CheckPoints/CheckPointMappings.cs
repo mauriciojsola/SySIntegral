@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SySIntegral.Core.Entities.Assets;
+using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Entities.Devices;
 
 namespace SySIntegral.Core.Mappings.CheckPoints

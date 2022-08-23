@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using SySIntegral.Core.Data;
+using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Entities.Devices;
 
 namespace SySIntegral.Core.Repositories.CheckPoints

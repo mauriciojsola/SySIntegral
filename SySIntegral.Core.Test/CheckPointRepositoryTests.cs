@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SySIntegral.Core.Data;
 using SySIntegral.Core.Entities.Assets;
+using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Entities.Devices;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Entities.Organizations;
@@ -67,7 +68,7 @@ namespace SySIntegral.Core.Test
 
                 var registry1 = new EggRegistry
                 {
-                    DeviceId = 1,
+                    InputDeviceId = 1,
                     Timestamp = DateTime.Today,
                     WhiteEggsCount = 1500,
                     ColorEggsCount = 689,

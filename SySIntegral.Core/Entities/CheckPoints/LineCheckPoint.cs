@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace SySIntegral.Core.Entities.Devices
+namespace SySIntegral.Core.Entities.CheckPoints
 {
     public class LineCheckPoint : CheckPoint
     {

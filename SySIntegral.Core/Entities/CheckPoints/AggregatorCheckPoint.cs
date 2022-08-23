@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
-namespace SySIntegral.Core.Entities.Devices
+namespace SySIntegral.Core.Entities.CheckPoints
 {
-    public class SimpleCheckPoint : CheckPoint
+    public class AggregatorCheckPoint : CheckPoint
     {
-        public SimpleCheckPoint()
+        public AggregatorCheckPoint()
         {
-            CheckPointType = CheckPointType.Simple;
+            CheckPointType = CheckPointType.Aggregator;
         }
 
         public override void AddChildren(CheckPoint children)
@@ -23,7 +22,7 @@ namespace SySIntegral.Core.Entities.Devices
 
         public override int Count()
         {
-            throw new NotImplementedException();
+            return Children.Sum(counter => counter.Count());
         }
     }
 }

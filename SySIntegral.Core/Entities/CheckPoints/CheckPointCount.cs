@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SySIntegral.Core.Entities.EggsRegistry;
+﻿using SySIntegral.Core.Entities.EggsRegistry;
 
-namespace SySIntegral.Core.Entities.Devices
+namespace SySIntegral.Core.Entities.CheckPoints
 {
     public class CheckPointCount
     {

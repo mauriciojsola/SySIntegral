@@ -15,11 +15,11 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     {
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly ICheckPointRepository _checkPointRepository;
-        private readonly ICheckPointCountingsReportRepository _checkPointCountingsReportRepository;
+        private readonly ICheckPointCountingReportRepository _checkPointCountingsReportRepository;
 
         public ReportsController(IRepository<EggRegistry> eggRegistryRepository,
             ICheckPointRepository checkPointRepository,
-            ICheckPointCountingsReportRepository checkPointCountingsReportRepository)
+            ICheckPointCountingReportRepository checkPointCountingsReportRepository)
         {
             _eggRegistryRepository = eggRegistryRepository;
             _checkPointRepository = checkPointRepository;

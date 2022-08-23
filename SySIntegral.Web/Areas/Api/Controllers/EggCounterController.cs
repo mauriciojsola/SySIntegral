@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Entities.Devices;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;

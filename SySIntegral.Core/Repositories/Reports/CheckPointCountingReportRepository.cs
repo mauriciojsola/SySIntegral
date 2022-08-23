@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using Dapper;
 using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Data;
+using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Entities.Devices;
 using SySIntegral.Core.Entities.EggsRegistry;
 
 namespace SySIntegral.Core.Repositories.Reports
 {
-    public class CheckPointCountingsReportRepository : ICheckPointCountingsReportRepository
+    public class CheckPointCountingReportRepository : ICheckPointCountingReportRepository
     {
         private readonly DapperDbContext _context;
-        public CheckPointCountingsReportRepository(DapperDbContext context)
+        public CheckPointCountingReportRepository(DapperDbContext context)
         {
             _context = context;
         }
@@ -88,7 +89,7 @@ namespace SySIntegral.Core.Repositories.Reports
             }
         }
 
-        public IEnumerable<DailyCountingDto> GetDailyCountings(DateTime startDate, DateTime endDate, int organizationId)
+        public IEnumerable<DailyCountingDto> GetDailyCounting(DateTime startDate, DateTime endDate, int organizationId)
         {
             var query = $@"	SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
                         d.UniqueId AS DeviceUniqueId, cp.Id AS CheckPointId,
@@ -141,9 +142,9 @@ namespace SySIntegral.Core.Repositories.Reports
         public CheckPointType CheckPointType { get; set; }
     }
 
-    public interface ICheckPointCountingsReportRepository
+    public interface ICheckPointCountingReportRepository
     {
         IEnumerable<CheckPointsHierarchyDto> GetCheckPointsHierarchy(int organizationId);
-        IEnumerable<DailyCountingDto> GetDailyCountings(DateTime startDate, DateTime endDate, int organizationId);
+        IEnumerable<DailyCountingDto> GetDailyCounting(DateTime startDate, DateTime endDate, int organizationId);
     }
 }

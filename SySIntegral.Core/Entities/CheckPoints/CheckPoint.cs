@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using SySIntegral.Core.Entities.Assets;
+using SySIntegral.Core.Entities.Devices;
 
-namespace SySIntegral.Core.Entities.Devices
+namespace SySIntegral.Core.Entities.CheckPoints
 {
     public abstract class CheckPoint : BaseEntity, ICheckPoint
     {
