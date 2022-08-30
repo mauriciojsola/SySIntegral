@@ -1,88 +1,290 @@
-﻿<div class="chartMenu">
-    <p>Prueba de Gráfico</p>
-</div>
-<div class="chartCard">
-    <div class="chartBox">
-        <canvas id="myChart"></canvas>
+﻿@using SySIntegral.Web.Areas.Admin.Controllers
+@using SySIntegral.Core.Application.Common.Utils
+@using SySIntegral.Core.Entities.CheckPoints
+@model CheckPointDailyCounts
+
+<style>
+    ul.regtree {
+        margin-left: -50px !important;
+    }
+
+    ul.regtree > li {
+        display: inline-block;
+        background-color: white;
+        padding: 10px;
+    }
+
+    ul.regtree > li > .counter {
+        font-size: 12px;
+    }
+</style>
+
+
+<h1>Conteos Diarios</h1>
+
+
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 6px 6px; border: 1px solid #ccc; border-radius: 0.25rem; width: 100%;" class="mb-1">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6">
+        <div class="mb-1">
+            <select id="assetsFilter" multiple="multiple" tabindex="-1">
+
+                @foreach (var a in Model.AssetDevices.ToList())
+                {
+                    <optgroup label="@a.AssetName">
+                        @foreach (var d in a.Devices.ToList())
+                        {
+                            <option value="@(d.Id)" selected="selected">@(d.Name)</option>
+                        }
+                    </optgroup>
+                }
+
+            </select>
+        </div>
     </div>
 </div>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc/chartjs-plugin-datalabels.min.js" integrity="sha512-5L00nKlyvEYuI4nju08bVuNEJEU8HbmG8fDGFbzt1HeZcgmBV5EuZz+HJ9au/6Ixvjddun6ZNwkRcclIlyviXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
 
-    const labels = [
-        'Enero',
-        'Febrero',
-        'Marzo',
-        'Abril',
-        'Mayo',
-        'Junio',
-        'Julio',
-        'Agosto',
-        'Septiembre',
-        'Octubre',
-        'Noviembre',
-        'Diciembre',
+<div id="dailyCountsContainer">
+    @*@Html.Partial("_DailyRegistriesList", Model.DateTotals)*@
+    <partial name="_DailyCountsListPartial" model="Model" />
+</div>
 
-    ];
+@*@foreach (var line in Model.CheckPoints)
+{
+    foreach (var date in line.GetUniqueDates())
+    {
+        <div>Día: @date.ToString("d")</div>
+        <ul class="regtree">
+            @{ RenderTree(line, date); }
+        </ul>
 
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'Conteos 2022',
-            datalabels: {
-                color: '#444444',
-                anchor: 'end',
-                align: 'start',
-                offset: 10,
-                formatter: function (value, context) {
-                    let formatter = new Intl.NumberFormat('es-AR', {});
-                    return formatter.format(value); //Number((value).toFixed(0)).toLocaleString();
-                }
-            },
-            backgroundColor: '#d9d2e9',
-            borderColor: [
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                'blue',
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                '#d9d2e9',
-                'red',
-                
-            ],
-            borderWidth: 1,
-            data: [120254, 135247, 100002, 189665, 156569, 110250, 201230, 145000, 147747,115000,197582, 98758],
-        }]
-    };
+    }
 
-    const config = {
-        type: 'bar',
-        data: data,
-        plugins: [ChartDataLabels],
-        options: {
-            scaleShowValues: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+}*@
+
+@section Scripts
+{
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>*@
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>*@
+    <script src="~/js/daterangepicker.js"></script>
+    @*<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />*@
+    <link href="~/css/daterangepicker.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+
+            $('#RefreshPage').click(function () {
+                console.debug("refreshing...");
+                updateReport();
+                //window.location.reload();
+            });
+
+            $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+                updateReport();
+            });
+
+            var start = moment().subtract(6, 'days');
+            var end = moment();
+
+            function initDatePicker(start, end) {
+                $('#reportrange span').html(formatDateToSpanish(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY')));
             }
+
+            $('#reportrange').daterangepicker({
+                showDropdowns: true,
+                minYear: 2020,
+                maxYear: @DateTime.Now.AddYears(5).Year,
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                    'Éste Mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes Anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: "Cancelar",
+                    fromLabel: "Desde",
+                    toLabel: "Hasta",
+                    customRangeLabel: "Elegir Fecha",
+                    daysOfWeek: [
+                        "Do",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    monthNames: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Setiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                }
+            }, initDatePicker);
+
+            $('#assetsFilter').multiselect({
+                enableClickableOptGroups: true,
+                enableFiltering: true,
+                includeSelectAllOption: true,
+                maxHeight: 400,
+                buttonWidth: '100%',
+                enableCaseInsensitiveFiltering: true,
+                numberDisplayed: 2,
+                filterPlaceholder: 'Buscar',
+                buttonTextAlignment: 'left',
+                disabledText: 'Deshabilitado...',
+                nonSelectedText: 'Seleccione Dispositivo/Establecimiento',
+                nSelectedText: ' seleccionados',
+                allSelectedText: 'Todos los dispositivos',
+                selectAllText: 'Seleccionar todos',
+
+                onChange: function (option, checked) {
+                    updateReport();
+                },
+                onSelectAll: function (option, checked) { updateReport(); },
+                onDeselectAll: function (option, checked) { updateReport();},
+            });
+
+            initDatePicker(start, end);
+
+
+        });
+
+        function formatDateToSpanish(englishedDate) {
+            var spanishedDate = englishedDate.replaceAll('January', 'Enero');
+            spanishedDate = spanishedDate.replaceAll('February', 'Febrero');
+            spanishedDate = spanishedDate.replaceAll('March', 'Marzo');
+            spanishedDate = spanishedDate.replaceAll('April', 'Abril');
+            spanishedDate = spanishedDate.replaceAll('May', 'Mayo');
+            spanishedDate = spanishedDate.replaceAll('June', 'Junio');
+            spanishedDate = spanishedDate.replaceAll('July', 'Julio');
+            spanishedDate = spanishedDate.replaceAll('August', 'Agosto');
+            spanishedDate = spanishedDate.replaceAll('September', 'Septiembre');
+            spanishedDate = spanishedDate.replaceAll('October', 'Octubre');
+            spanishedDate = spanishedDate.replaceAll('November', 'Noviembre');
+            spanishedDate = spanishedDate.replaceAll('December', 'Diciembre');
+            return spanishedDate;
         }
-    };
 
+        function getDevices() {
+            // Get selected options.
+            var devices = [];
+            var selectedOptions = $('#assetsFilter option:selected').each(function () {
+                devices.push($(this).val());
+            });
+            return devices;
+        }
 
-    // render init block
-    const myChart = new Chart(
-      document.getElementById('myChart'),
-      config
-    );
-    
-  
-    
+        function getDateRange() {
+            return {
+                startDate: $('#reportrange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
+                endDate: $('#reportrange').data('daterangepicker').endDate.format('YYYY-MM-DD')
+            };
+        }
+
+        function updateReport() {
+            let dateRange = getDateRange();
+
+            $.post("Counts/Filter", {
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                deviceIds: getDevices()
+            }).done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#dailyCountsContainer').html(data);
+                //updateTotals();
+                //updateRegistries();
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });
+
+        }
+
+        function updateTotals() {
+            let dateRange = getDateRange();
+
+            $.post("Registries/today-totals", {
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                deviceIds: getDevices()
+            }).done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#todaysWhiteCounter').text(data.whiteEggsCount.toLocaleString('es-AR'));
+                $('#todaysColorCounter').text(data.colorEggsCount.toLocaleString('es-AR'));
+                $('#todaysTotalCounter').text((data.whiteEggsCount + data.colorEggsCount).toLocaleString('es-AR'));
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });;
+        }
+
+        function updateRegistries() {
+            let dateRange = getDateRange();
+
+            $.post("Registries/latest").done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#registriesContainer').html(data);
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });;
+        }
+
+        $(document).ajaxStart(function () {
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: 0.4,
+                    color: '#fff'
+                },
+                message: 'Cargando...',
+                overlayCSS: {
+                    backgroundColor: '#ccc',
+                    opacity: 0.6
+                }
+            });
+
+        }).ajaxStop($.unblockUI);
+
 
     </script>
+
+
+
+}
+

@@ -11,10 +11,10 @@ using SySIntegral.Core.Entities.EggsRegistry;
 
 namespace SySIntegral.Core.Repositories.Reports
 {
-    public class CheckPointCountingReportRepository : ICheckPointCountingReportRepository
+    public class CheckPointCountsReportRepository : ICheckPointCountsReportRepository
     {
         private readonly DapperDbContext _context;
-        public CheckPointCountingReportRepository(DapperDbContext context)
+        public CheckPointCountsReportRepository(DapperDbContext context)
         {
             _context = context;
         }
@@ -89,7 +89,7 @@ namespace SySIntegral.Core.Repositories.Reports
             }
         }
 
-        public IEnumerable<DailyCountingDto> GetDailyCounting(DateTime startDate, DateTime endDate, int organizationId)
+        public IEnumerable<DailyCountingDto> GetDailyCounts(DateTime startDate, DateTime endDate, int organizationId)
         {
             var query = $@"	SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
                         d.UniqueId AS DeviceUniqueId, cp.Id AS CheckPointId,
@@ -136,15 +136,15 @@ namespace SySIntegral.Core.Repositories.Reports
         public int OrganizationId { get; set; }
     }
 
-    public class CheckPointDto
-    {
-        public string CheckPointName { get; set; }
-        public CheckPointType CheckPointType { get; set; }
-    }
+    //public class CheckPointDto
+    //{
+    //    public string CheckPointName { get; set; }
+    //    public CheckPointType CheckPointType { get; set; }
+    //}
 
-    public interface ICheckPointCountingReportRepository
+    public interface ICheckPointCountsReportRepository
     {
         IEnumerable<CheckPointsHierarchyDto> GetCheckPointsHierarchy(int organizationId);
-        IEnumerable<DailyCountingDto> GetDailyCounting(DateTime startDate, DateTime endDate, int organizationId);
+        IEnumerable<DailyCountingDto> GetDailyCounts(DateTime startDate, DateTime endDate, int organizationId);
     }
 }

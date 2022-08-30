@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SySIntegral.Core.Entities.EggsRegistry;
 using SySIntegral.Core.Repositories;
+using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Reports;
 
@@ -13,17 +15,23 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
     [Authorize]
     public partial class ReportsController : SySIntegralBaseController
     {
+        private readonly ILogger<RegistriesController> _logger;
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly ICheckPointRepository _checkPointRepository;
-        private readonly ICheckPointCountingReportRepository _checkPointCountingsReportRepository;
+        private readonly ICheckPointCountsReportRepository _checkPointCountsReportRepository;
+        private readonly IAssetRepository _assetRepository;
 
-        public ReportsController(IRepository<EggRegistry> eggRegistryRepository,
+        public ReportsController(ILogger<RegistriesController> logger,
+            IRepository<EggRegistry> eggRegistryRepository,
             ICheckPointRepository checkPointRepository,
-            ICheckPointCountingReportRepository checkPointCountingsReportRepository)
+            ICheckPointCountsReportRepository checkPointCountsReportRepository,
+            IAssetRepository assetRepository)
         {
+            _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
             _checkPointRepository = checkPointRepository;
-            _checkPointCountingsReportRepository = checkPointCountingsReportRepository;
+            _checkPointCountsReportRepository = checkPointCountsReportRepository;
+            _assetRepository = assetRepository;
         }
 
         [Route("")]

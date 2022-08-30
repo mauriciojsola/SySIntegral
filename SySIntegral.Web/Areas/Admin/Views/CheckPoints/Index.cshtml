@@ -14,17 +14,31 @@
 
 @foreach (var checkPoint in Model.Where(x => x.CheckPointType == CheckPointType.Aggregator))
 {
-    <ul class="list-group flex-column flex-md-row">
-        <li class="list-group-item text-center">
-            <div><i class="bi bi-grid-3x3-gap" style="display: inline-block;"></i> <span style="display: inline-block;">@checkPoint.Description</span></div>
-        </li>
+    @*<ul class="list-group flex-column flex-md-row">
+            <li class="list-group-item text-center">
+                <div><i class="bi bi-grid-3x3-gap" style="display: inline-block;"></i> <span style="display: inline-block;">@checkPoint.Description</span></div>
+            </li>
+
+            @{
+                ShowTree(checkPoint.Children.ToList());
+            }
+        </ul>*@
+
+    <div class="d-flex flex-sm-row-reverse  justify-content-around flex-sm-row flex-column">
+        <div class="card p-4 d-inline-block text-center"><i class="bi bi-grid-3x3-gap d-inline-block"></i> <span class="d-inline-block">@checkPoint.Description</span></div>
 
         @{
-            ShowTree(checkPoint.Children.ToList());
+            ShowTree2(checkPoint.Children.ToList());
         }
-    </ul>
+
+
+    </div>
 
 }
+
+
+
+
 
 @if (Model == null || !Model.Any())
 {
@@ -32,28 +46,28 @@
 }
 
 @functions {
-    private void ShowTree(List<CheckPoint> menusList)
-    {
-        if (menusList != null)
+    @*private void ShowTree(List<CheckPoint> menusList)
         {
-            foreach (var item in menusList)
+            if (menusList != null)
             {
-                <li class="list-group-item border-left-0 border-right-0 border-md-0 text-center"><i class="bi bi-arrow-left d-none d-md-block"></i><i class="bi bi-arrow-up d-md-none"></i></li>
-                <li class="list-group-item text-center">
-                    <div>
-                        <i class="bi bi-arrow-left-square" style="display: inline-block;"></i>
-                        <span style="display: inline-block;">@item.Description</span>
-                    </div>
-                    <div class="text-info small">[@item.InputDevice.Description]</div>
-                </li>
-
-                @if (item.Children.Any())
+                foreach (var item in menusList)
                 {
-                    ShowTree(item.Children.ToList());
+                    <li class="list-group-item border-left-0 border-right-0 border-md-0 text-center"><i class="bi bi-arrow-left d-none d-md-block"></i><i class="bi bi-arrow-up d-md-none"></i></li>
+                    <li class="list-group-item text-center">
+                        <div>
+                            <i class="bi bi-arrow-left-square" style="display: inline-block;"></i>
+                            <span style="display: inline-block;">@item.Description</span>
+                        </div>
+                        <div class="text-info small">[@item.InputDevice.Description]</div>
+                    </li>
+
+                    @if (item.Children.Any())
+                    {
+                        ShowTree(item.Children.ToList());
+                    }
                 }
             }
-        }
-    }
+        }*@
 
     private void ShowTree2(List<CheckPoint> menusList)
     {
@@ -61,8 +75,19 @@
         {
             foreach (var item in menusList)
             {
-                <div class="card pt-4 pb-4 ml-1 border-0"><i class="bi bi-arrow-left"></i></div>
-                <div class="card p-4">@item.Description</div>
+                <div class="card pt-4 pb-4 ml-1 border-0 d-flex justify-content-center text-center">
+                    <div class="d-flex justify-content-sm-center w-100"><i class="bi bi-arrow-right d-none d-md-block w-100"></i><i class="bi bi-arrow-up d-md-none w-100"></i></div>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="d-inline-block">
+                        @*<i class="bi bi-arrow-left-right d-inline-block"></i>&nbsp;@item.Description*@
+                        @*<i class="bi bi-fullscreen d-inline-block"></i>&nbsp;@item.Description*@
+                        <i class="bi bi-upc-scan d-inline-block"></i>&nbsp;@item.Description
+                    </div>
+                    <div class="text-info small">[@item.InputDevice.Description]</div>
+
+                </div>
+
                 @if (item.Children.Any())
                 {
                     ShowTree2(item.Children.ToList());
@@ -70,4 +95,20 @@
             }
         }
     }
+
+    @*private void ShowTree2(List<CheckPoint> menusList)
+        {
+            if (menusList != null)
+            {
+                foreach (var item in menusList)
+                {
+                    <div class="card pt-4 pb-4 ml-1 border-0"><i class="bi bi-arrow-left"></i></div>
+                    <div class="card p-4">@item.Description</div>
+                    @if (item.Children.Any())
+                    {
+                        ShowTree2(item.Children.ToList());
+                    }
+                }
+            }
+        }*@
 }
