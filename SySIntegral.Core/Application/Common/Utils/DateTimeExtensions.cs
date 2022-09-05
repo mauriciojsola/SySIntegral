@@ -106,9 +106,9 @@ namespace SySIntegral.Core.Application.Common.Utils
             var today = DateTime.Today.AbsoluteStart();
             var eventDate = date.AbsoluteStart();
 
-            if (eventDate == today) return "Hoy";
-            if (eventDate == today.AddDays(-1)) return "Ayer";
-            return returnDateForOldDates ? eventDate.ToShortDateString() : $"Hace {(eventDate.DaysBetweenDates(today))} días";
+            if (eventDate == today) return $"Hoy ({date.ToString("d")})";
+            if (eventDate == today.AddDays(-1)) return $"Ayer ({date.ToString("d")})";
+            return returnDateForOldDates ? eventDate.ToShortDateString() : $"Hace {(eventDate.DaysBetweenDates(today))} días ({date.ToString("d")})";
         }
 
         public static bool IsToday(this DateTime date)

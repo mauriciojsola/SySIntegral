@@ -1,0 +1,99 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using SySIntegral.Core.Entities.CheckPoints
+@using SySIntegral.Web.Areas.Admin.Controllers
+@using SySIntegral.Core.Application.Common.Utils
+@model SySIntegral.Web.Areas.Admin.Controllers.CheckPointDailyCounts
+
+@{
+    var date1 = Model.CheckPoints.SelectMany(x => x.GetUniqueDates()).Any() ? Model.CheckPoints.SelectMany(x => x.GetUniqueDates()).Max() : default(DateTime?);
+}
+
+<h4>@(date1.HasValue ? date1.Value.ElapsedTimeInWords() : "Última lectura")</h4>
+
+@foreach (var checkPoint in Model.CheckPoints.Where(x => x.CheckPointType == CheckPointType.Aggregator))
+{
+    var date = checkPoint.GetUniqueDates().Any() ? checkPoint.GetUniqueDates().Max() : default(DateTime?);
+
+    if (date.HasValue)
+    {
+
+        <div class="d-flex flex-sm-row-reverse  justify-content-around flex-sm-row flex-column">
+            <div class="card p-2 d-inline-block text-center">
+                <div class="text-center mb-2" style="background-color: #f4f4f4;"><i class="bi bi-grid-3x3-gap d-inline-block"></i> <span class="d-inline-block">@checkPoint.Name</span></div>
+                <div class="text-right counter">
+
+                    @if (checkPoint.CheckPointType != CheckPointType.Aggregator)
+                    {
+                        <div class="text-right counter">Parcial: @checkPoint.GetPartialCount(date.Value).ToString("N0")</div>
+                    }
+                    else
+                    {
+                        <div>&nbsp;</div>
+                    }
+
+                </div>
+                <div class="text-right counter @(checkPoint.CheckPointType == CheckPointType.Aggregator ? "font-weight-bold" : "")">Acumulado: @checkPoint.GetAggregatedCount(date.Value).ToString("N0")</div>
+            </div>
+
+            @{
+
+                RenderTree(checkPoint.Children.ToList(), date.Value);
+            }
+
+        </div>
+    }
+    else
+    {
+        <div>No hay datos en el rango seleccionado.</div>
+    }
+}
+
+@functions {
+
+    private void RenderTree(List<CheckPointDto> tree, DateTime date)
+    {
+        if (tree != null)
+        {
+            foreach (var item in tree)
+            {
+                <div class="card pt-2 pb-2 ml-1 border-0 d-flex justify-content-center text-center">
+                    <div class="d-flex justify-content-sm-center w-100"><i class="bi bi-arrow-right d-none d-md-block w-100"></i><i class="bi bi-arrow-up d-md-none w-100"></i></div>
+                </div>
+                <div class="card p-2 text-center">
+                    <div class="text-center mb-2" style="background-color: #f4f4f4;">
+                        @*<i class="bi bi-arrow-left-right d-inline-block"></i>&nbsp;@item.Description*@
+                        @*<i class="bi bi-fullscreen d-inline-block"></i>&nbsp;@item.Description
+                            <i class="bi bi-upc-scan d-inline-block"></i>*@
+                        <i class="bi bi-fullscreen d-inline-block"></i> <span class="d-inline-block">@item.Name</span>
+                    </div>
+
+
+                    <div class="text-right counter">
+
+                        @if (item.CheckPointType != CheckPointType.Aggregator)
+                        {
+                            <div class="text-right counter">Parcial: @item.GetPartialCount(date).ToString("N0")</div>
+                        }
+                        else
+                        {
+                            <div>&nbsp;</div>
+                        }
+
+                    </div>
+                    <div class="text-right counter">Acumulado: @item.GetAggregatedCount(date).ToString("N0")</div>
+
+                </div>
+
+                @if (item.Children.Any())
+                {
+                    RenderTree(item.Children.ToList(), date);
+                }
+            }
+        }
+    }
+
+}
+
+
+

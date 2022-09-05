@@ -111,6 +111,41 @@ namespace SySIntegral.Core.Repositories.Reports
             }
         }
 
+        public IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId)
+        {
+            var query = $@"	
+
+                    SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
+                        d.UniqueId AS DeviceUniqueId, cp.Id AS CheckPointId,
+                        cp.ParentId AS CheckPointParentId,a.Id AS AssetId
+                            FROM EggRegistry AS r
+                            INNER JOIN InputDevice AS d ON d.Id = r.InputDeviceId
+                            INNER JOIN [CheckPoint] AS cp ON cp.InputDeviceId = d.Id
+                            INNER JOIN Asset AS a ON a.Id = d.AssetId
+                            INNER JOIN Organization AS org ON org.Id = a.OrganizationId
+
+                        WHERE r.ReadTimeStamp IS NOT NULL
+
+                        AND org.Id = {organizationId}  
+
+                        AND r.ReadTimestamp = (SELECT MAX(r2.ReadTimestamp) FROM EggRegistry AS r2
+                            INNER JOIN InputDevice AS d2 ON d2.Id = r2.InputDeviceId
+                            INNER JOIN [CheckPoint] AS cp2 ON cp2.InputDeviceId = d2.Id
+                            INNER JOIN Asset AS a2 ON a2.Id = d2.AssetId
+                            INNER JOIN Organization AS org2 ON org2.Id = a2.OrganizationId 
+                                               WHERE org2.Id = {organizationId})
+                            
+                        GROUP BY CAST(r.ReadTimestamp as DATE), d.UniqueId, cp.Id, cp.ParentId, a.Id
+                        
+";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var result = connection.Query<DailyCountingDto>(query);
+                return result.ToList();
+            }
+        }
+
     }
 
     public class DailyCountingDto
@@ -146,5 +181,6 @@ namespace SySIntegral.Core.Repositories.Reports
     {
         IEnumerable<CheckPointsHierarchyDto> GetCheckPointsHierarchy(int organizationId);
         IEnumerable<DailyCountingDto> GetDailyCounts(DateTime startDate, DateTime endDate, int organizationId);
+        IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId);
     }
 }

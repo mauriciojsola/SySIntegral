@@ -8,20 +8,31 @@
         margin-left: -50px !important;
     }
 
-    ul.regtree > li {
-        display: inline-block;
-        background-color: white;
-        padding: 10px;
+        ul.regtree > li {
+            display: inline-block;
+            background-color: white;
+            padding: 10px;
+        }
+
+    .counter {
+        font-size: 13px;
     }
 
     ul.regtree > li > .counter {
-        font-size: 12px;
+        font-size: 13px;
     }
 </style>
 
+@*<partial name="_DayTotalsPartial" model="Model" />*@
 
-<h1>Conteos Diarios</h1>
+@await Component.InvokeAsync("DayTotal")
 
+
+<button id="RefreshPage" class="btn btn-sm btn-info mt-2" name="RefreshPage">
+    <i class="bi bi-arrow-clockwise"></i>
+    Refrescar
+</button>
+<hr />
 
 <div class="row">
     <div class="col-12 col-sm-6">
@@ -55,17 +66,17 @@
 </div>
 
 @*@foreach (var line in Model.CheckPoints)
-{
-    foreach (var date in line.GetUniqueDates())
     {
-        <div>Día: @date.ToString("d")</div>
-        <ul class="regtree">
-            @{ RenderTree(line, date); }
-        </ul>
+        foreach (var date in line.GetUniqueDates())
+        {
+            <div>Día: @date.ToString("d")</div>
+            <ul class="regtree">
+                @{ RenderTree(line, date); }
+            </ul>
 
-    }
+        }
 
-}*@
+    }*@
 
 @section Scripts
 {

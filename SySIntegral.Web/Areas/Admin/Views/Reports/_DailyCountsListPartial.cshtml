@@ -10,11 +10,8 @@
         <ul class="regtree">
             @{ RenderTree(line, date); }
         </ul>
-
     }
-
 }
-
 
 @functions {
     public void RenderTree(CheckPointDto item, DateTime date)
@@ -40,7 +37,6 @@
         @if (item.Children.Any())
         {
             <li>  &lt;</li>
-
         }
         @foreach (var child in item.Children)
         {
