@@ -57,6 +57,13 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             return PartialView("_DailyCountsListPartial", model);
         }
 
+        [Route("Counts/Refresh-Totals")]
+        [HttpPost]
+        public IActionResult RefreshTotals()
+        {
+            return ViewComponent("DayTotal");
+        }
+
         private object GetCounts(DateTime? startDate, DateTime? endDate, IList<int> deviceIds)
         {
             //var startDate = DateTime.Now.AddDays(ReportDays).AbsoluteStart();
@@ -173,11 +180,11 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             var firstChild = Children.FirstOrDefault();
             var dailyCount = Counts.FirstOrDefault(x => x.RegistryDate.AbsoluteStart() == date.AbsoluteStart());
 
-            if (firstChild == null) return dailyCount?.WhiteEggsCount ?? 0;
+            if (firstChild == null) return dailyCount?.GetTotalEggsCount() ?? 0;
 
             return CheckPointType == CheckPointType.Aggregator
                 ? firstChild.GetAggregatedCount(date)
-                : dailyCount?.WhiteEggsCount ?? 0;
+                : dailyCount?.GetTotalEggsCount() ?? 0;
         }
 
     }

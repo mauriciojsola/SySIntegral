@@ -157,6 +157,12 @@ namespace SySIntegral.Core.Repositories.Reports
         public int CheckPointId { get; set; }
         public int? CheckPointParentId { get; set; }
         public int AssetId { get; set; }
+
+        public int GetTotalEggsCount()
+        {
+            return WhiteEggsCount + ColorEggsCount;
+        }
+
     }
 
     public class CheckPointsHierarchyDto

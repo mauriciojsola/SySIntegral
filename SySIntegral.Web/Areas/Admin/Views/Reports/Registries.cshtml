@@ -25,7 +25,10 @@
 
 @*<partial name="_DayTotalsPartial" model="Model" />*@
 
-@await Component.InvokeAsync("DayTotal")
+<div id="dayTotalContainer">
+    @await Component.InvokeAsync("DayTotal")
+</div>
+
 
 
 <button id="RefreshPage" class="btn btn-sm btn-info mt-2" name="RefreshPage">
@@ -216,6 +219,23 @@
 
         function updateReport() {
             let dateRange = getDateRange();
+            
+            $.post("Counts/Refresh-Totals", {
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                deviceIds: getDevices()
+            }).done(function (data, status) {
+                //console.debug("Data: ", data, status);
+                $('#dayTotalContainer').html(data);
+                //updateTotals();
+                //updateRegistries();
+            })
+                .fail(function (error) {
+                    console.debug('Error:', error);
+                })
+                .always(function () {
+                    $.unblockUI();
+                });
 
             $.post("Counts/Filter", {
                 startDate: dateRange.startDate,
@@ -233,6 +253,9 @@
                 .always(function () {
                     $.unblockUI();
                 });
+            
+            
+            
 
         }
 
