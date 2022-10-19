@@ -12,6 +12,7 @@ using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.Reports;
+using SySIntegral.Core.Services.Reports.Dto;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
 {
@@ -114,14 +115,14 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             };
         }
 
-        private IList<AssetDevicesModel> GetAssetDevices()
+        private IList<AssetDevicesDto> GetAssetDevices()
         {
             var result = _assetRepository.GetAll().Include(x => x.Devices)
                  .Where(x => x.Organization.Id == OrganizationId).OrderBy(x => x.Name)
-                 .Select(x => new AssetDevicesModel
+                 .Select(x => new AssetDevicesDto
                  {
                      AssetName = x.Name,
-                     Devices = x.Devices.OrderBy(d => d.Description).Select(m => new DeviceModel { Id = m.Id, Name = m.Description, UniqueId = m.UniqueId }).ToList()
+                     Devices = x.Devices.OrderBy(d => d.Description).Select(m => new DeviceDto { Id = m.Id, Name = m.Description, UniqueId = m.UniqueId }).ToList()
                  }).ToList();
 
             return result;
@@ -155,7 +156,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             {
                 LatestRegistries = new List<RegistryEntryDto>();
                 DateTotals = new List<RegistryEntryDto>();
-                AssetDevices = new List<AssetDevicesModel>();
+                AssetDevices = new List<AssetDevicesDto>();
             }
 
             public DateTime StartDate { get; set; }
@@ -165,25 +166,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             public int TotalRecords { get; set; }
             public IList<RegistryEntryDto> DateTotals { get; set; }
             public RegistryEntryDto TodayTotals { get; set; }
-            public IList<AssetDevicesModel> AssetDevices { get; set; }
+            public IList<AssetDevicesDto> AssetDevices { get; set; }
         }
     }
-
-    public class AssetDevicesModel
-    {
-        public AssetDevicesModel()
-        {
-            Devices = new List<DeviceModel>();
-        }
-        public string AssetName { get; set; }
-        public IList<DeviceModel> Devices { get; set; }
-    }
-
-    public class DeviceModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string UniqueId { get; set; }
-    }
-
 }

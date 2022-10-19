@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,8 @@ using SySIntegral.Core.Application.Common.Utils;
 using SySIntegral.Core.Entities.CheckPoints;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Reports;
+using SySIntegral.Core.Services.Reports;
+using SySIntegral.Core.Services.Reports.Dto;
 using SySIntegral.Web.Areas.Admin.Controllers;
 using SySIntegral.Web.Common.ViewComponents;
 
@@ -17,14 +20,17 @@ namespace SySIntegral.Web.Areas.Admin.Views.Reports.Components
         private readonly ILogger<RegistriesController> _logger;
         private readonly ICheckPointRepository _checkPointRepository;
         private readonly ICheckPointCountsReportRepository _checkPointCountsReportRepository;
+        private readonly IReportsService _reportsService;
 
         public DayTotalViewComponent(ILogger<RegistriesController> logger,
             ICheckPointRepository checkPointRepository,
-            ICheckPointCountsReportRepository checkPointCountsReportRepository)
+            ICheckPointCountsReportRepository checkPointCountsReportRepository,
+            IReportsService reportsService)
         {
             _logger = logger;
             _checkPointRepository = checkPointRepository;
             _checkPointCountsReportRepository = checkPointCountsReportRepository;
+            _reportsService = reportsService;
         }
 
         //public IViewComponentResult Invoke(int organizationId)
@@ -34,37 +40,27 @@ namespace SySIntegral.Web.Areas.Admin.Views.Reports.Components
 
             await Task.Run(() =>
             {
-                var checkPointsHierarchy = _checkPointCountsReportRepository.GetCheckPointsHierarchy(OrganizationId).ToList();
-                var dailyCounts = _checkPointCountsReportRepository.GetLatestDailyCounts(OrganizationId).ToList();
-
-                var checkPoints = new List<CheckPointDto>();
-                foreach (var pcp in checkPointsHierarchy.Where(x => !x.CheckPointParentId.HasValue).ToList())
-                {
-                    var root = LoadTreeRecursive(pcp, checkPointsHierarchy, dailyCounts);
-                    checkPoints.Add(root);
-                }
-
-                model.CheckPoints = checkPoints;
+                model.CheckPoints = _reportsService.GetLatestDailyCounts(OrganizationId).CheckPoints;
             });
 
             return View(model);
         }
 
-        private CheckPointDto LoadTreeRecursive(CheckPointsHierarchyDto parent, List<CheckPointsHierarchyDto> treeHierarchy, List<DailyCountingDto> dailyCounts)
-        {
-            var node = new CheckPointDto
-            {
-                CheckPointType = parent.CheckPointType.ToEnum<CheckPointType>(),
-                Name = parent.CheckPointName,
-                Counts = dailyCounts.Where(x => x.CheckPointId == parent.CheckPointId).ToList()
-            };
+        //private CheckPointDto LoadTreeRecursive(CheckPointsHierarchyDto parent, List<CheckPointsHierarchyDto> treeHierarchy, List<DailyCountingDto> dailyCounts)
+        //{
+        //    var node = new CheckPointDto
+        //    {
+        //        CheckPointType = parent.CheckPointType.ToEnum<CheckPointType>(),
+        //        Name = parent.CheckPointName,
+        //        Counts = dailyCounts.Where(x => x.CheckPointId == parent.CheckPointId).ToList()
+        //    };
 
-            foreach (var child in treeHierarchy.Where(x => x.CheckPointParentId == parent.CheckPointId).ToList())
-            {
-                node.Children.Add(LoadTreeRecursive(child, treeHierarchy, dailyCounts));
-            }
+        //    foreach (var child in treeHierarchy.Where(x => x.CheckPointParentId == parent.CheckPointId).ToList())
+        //    {
+        //        node.Children.Add(LoadTreeRecursive(child, treeHierarchy, dailyCounts));
+        //    }
 
-            return node;
-        }
+        //    return node;
+        //}
     }
 }

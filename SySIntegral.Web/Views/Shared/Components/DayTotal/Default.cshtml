@@ -3,7 +3,8 @@
 @using SySIntegral.Core.Entities.CheckPoints
 @using SySIntegral.Web.Areas.Admin.Controllers
 @using SySIntegral.Core.Application.Common.Utils
-@model SySIntegral.Web.Areas.Admin.Controllers.CheckPointDailyCounts
+@using SySIntegral.Core.Services.Reports.Dto
+@model SySIntegral.Core.Services.Reports.Dto.CheckPointDailyCounts
 
 @{
     var date1 = Model.CheckPoints.SelectMany(x => x.GetUniqueDates()).Any() ? Model.CheckPoints.SelectMany(x => x.GetUniqueDates()).Max() : default(DateTime?);

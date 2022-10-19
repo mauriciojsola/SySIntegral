@@ -7,6 +7,7 @@ using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.Assets;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Reports;
+using SySIntegral.Core.Services.Reports;
 
 namespace SySIntegral.Web.Areas.Admin.Controllers
 {
@@ -20,11 +21,13 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
         private readonly ICheckPointRepository _checkPointRepository;
         private readonly ICheckPointCountsReportRepository _checkPointCountsReportRepository;
         private readonly IAssetRepository _assetRepository;
+        private readonly IReportsService _reportsService;
 
         public ReportsController(ILogger<RegistriesController> logger,
             IRepository<EggRegistry> eggRegistryRepository,
             ICheckPointRepository checkPointRepository,
             ICheckPointCountsReportRepository checkPointCountsReportRepository,
+            IReportsService reportsService,
             IAssetRepository assetRepository)
         {
             _logger = logger;
@@ -32,6 +35,7 @@ namespace SySIntegral.Web.Areas.Admin.Controllers
             _checkPointRepository = checkPointRepository;
             _checkPointCountsReportRepository = checkPointCountsReportRepository;
             _assetRepository = assetRepository;
+            _reportsService = reportsService;
         }
 
         [Route("")]

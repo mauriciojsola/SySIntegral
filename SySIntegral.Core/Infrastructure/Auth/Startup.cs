@@ -18,6 +18,7 @@ using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.Organizations;
 using SySIntegral.Core.Repositories.Reports;
+using SySIntegral.Core.Services.Reports;
 
 namespace SySIntegral.Core.Infrastructure.Auth
 {
@@ -51,6 +52,8 @@ namespace SySIntegral.Core.Infrastructure.Auth
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             // Generic interface and implementation.
+
+            // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IAssetRepository, AssetRepository>();
@@ -58,6 +61,9 @@ namespace SySIntegral.Core.Infrastructure.Auth
             services.AddScoped<ICheckPointRepository, CheckPointRepository>();
             services.AddScoped<IEggRegistryReportRepository, EggRegistryReportRepository>();
             services.AddScoped<ICheckPointCountsReportRepository, CheckPointCountsReportRepository>();
+
+            // Services
+            services.AddScoped<IReportsService, ReportsService>();
 
             return services;
         }
