@@ -39,7 +39,7 @@ namespace SySIntegral.DataGenerator
             {
                 var lines = new List<string>();
 
-                var startDate = new DateTime(2022, 06, 01);
+                var startDate = new DateTime(2022, 10, 01);
                 //var line = $"DeviceId,Timestamp,WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp";
                 //Debug.WriteLine(line);
                 for (var d = 0; d < 60; d++)
@@ -64,7 +64,7 @@ namespace SySIntegral.DataGenerator
                             //var url = await CreateRegistryAsync(data);
                             //var line = $"'df73016a-b1bf-11ec-b909-0242ac120002','{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}'";
 
-                            lines.Add($"insert into EggRegistry (DeviceId,[Timestamp],WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp) VALUES (11,'{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}')");
+                            lines.Add($"insert into EggRegistry (InputDeviceId,[Timestamp],WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp) VALUES (11,'{DateTime.Now:G}',{whiteCounter},{colorCounter},'{rDate:G}','{rDate:G}')");
                             //Debug.WriteLine(line);
                             //Task.Delay(500).Wait();
                             whiteCounter += GetRandomNumber(100, 1300);
@@ -74,14 +74,14 @@ namespace SySIntegral.DataGenerator
                     startDate = startDate.AddDays(1);
                 }
 
-                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegraljunjuldev2.txt", lines);
+                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegraloctdev2.txt", lines);
 
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-
+            Console.WriteLine("Presione cualquier tecla para terminar");
             Console.ReadLine();
 
             static async Task<Uri> CreateRegistryAsync(EggCounterRegistry data)
