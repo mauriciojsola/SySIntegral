@@ -60,12 +60,12 @@ namespace SySIntegral.Core.Services.Reports
             };
         }
 
-        public CheckPointDailyCounts GetLatestDailyCounts(int organizationId)
+        public CheckPointDailyCounts GetLatestDailyCounts(int organizationId, bool onlyTodayData = false)
         {
-           var assetDevices = GetAssetDevices(organizationId);
+            var assetDevices = GetAssetDevices(organizationId);
 
             var checkPointsHierarchy = _checkPointCountsReportRepository.GetCheckPointsHierarchy(organizationId).ToList();
-            var dailyCounts = _checkPointCountsReportRepository.GetLatestDailyCounts(organizationId).ToList();
+            var dailyCounts = _checkPointCountsReportRepository.GetLatestDailyCounts(organizationId, onlyTodayData).ToList();
 
             var checkPoints = new List<CheckPointDto>();
             foreach (var pcp in checkPointsHierarchy.Where(x => !x.CheckPointParentId.HasValue).ToList())
@@ -95,7 +95,7 @@ namespace SySIntegral.Core.Services.Reports
 
             return result;
         }
-        
+
         private CheckPointDto LoadTreeRecursive(CheckPointsHierarchyDto parent, List<CheckPointsHierarchyDto> treeHierarchy, List<DailyCountingDto> dailyCounts)
         {
             var node = new CheckPointDto
@@ -118,7 +118,7 @@ namespace SySIntegral.Core.Services.Reports
     public interface IReportsService
     {
         CheckPointDailyCounts GetDailyCounts(int organizationId, int reportDays, DateTime? startDate, DateTime? endDate, IList<int> deviceIds);
-        CheckPointDailyCounts GetLatestDailyCounts(int organizationId);
+        CheckPointDailyCounts GetLatestDailyCounts(int organizationId, bool onlyTodayData = false);
         IList<AssetDevicesDto> GetAssetDevices(int organizationId);
     }
 }

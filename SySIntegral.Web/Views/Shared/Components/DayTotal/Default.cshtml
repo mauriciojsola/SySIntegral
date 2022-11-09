@@ -12,43 +12,45 @@
 
 <h4>@(date1.HasValue ? date1.Value.ElapsedTimeInWords() : "Última lectura")</h4>
 
-@foreach (var checkPoint in Model.CheckPoints.Where(x => x.CheckPointType == CheckPointType.Aggregator))
-{
-    var date = checkPoint.GetUniqueDates().Any() ? checkPoint.GetUniqueDates().Max() : default(DateTime?);
-
-    if (date.HasValue)
+<div class="day-summary-container">
+    @foreach (var checkPoint in Model.CheckPoints.Where(x => x.CheckPointType == CheckPointType.Aggregator))
     {
+        var date = checkPoint.GetUniqueDates().Any() ? checkPoint.GetUniqueDates().Max() : default(DateTime?);
 
-        <div class="d-flex flex-sm-row-reverse  justify-content-around flex-sm-row flex-column">
-            <div class="card p-2 d-inline-block text-center">
-                <div class="text-center mb-2" style="background-color: #f4f4f4;"><i class="bi bi-grid-3x3-gap d-inline-block"></i> <span class="d-inline-block">@checkPoint.Name</span></div>
-                <div class="text-right counter">
+        if (date.HasValue)
+        {
 
-                    @if (checkPoint.CheckPointType != CheckPointType.Aggregator)
-                    {
-                        <div class="text-right counter">Parcial: @checkPoint.GetPartialCount(date.Value).ToString("N0")</div>
-                    }
-                    else
-                    {
-                        <div>&nbsp;</div>
-                    }
+            <div class="d-flex flex-sm-row-reverse  justify-content-around flex-sm-row flex-column">
+                <div class="card p-2 d-inline-block text-center">
+                    <div class="text-center mb-2 checkpoint-name" style="background-color: #f4f4f4;"><i class="bi bi-grid-3x3-gap d-inline-block"></i> <span class="d-inline-block">@checkPoint.Name</span></div>
+                    <div class="text-right counter">
 
+                        @if (checkPoint.CheckPointType != CheckPointType.Aggregator)
+                        {
+                            <div class="text-right counter">Parcial: @checkPoint.GetPartialCount(date.Value).ToString("N0")</div>
+                        }
+                        else
+                        {
+                            <div>&nbsp;</div>
+                        }
+
+                    </div>
+                    <div class="text-right counter @(checkPoint.CheckPointType == CheckPointType.Aggregator ? "font-weight-bold" : "")">Acumulado: @checkPoint.GetAggregatedCount(date.Value).ToString("N0")</div>
                 </div>
-                <div class="text-right counter @(checkPoint.CheckPointType == CheckPointType.Aggregator ? "font-weight-bold" : "")">Acumulado: @checkPoint.GetAggregatedCount(date.Value).ToString("N0")</div>
+
+                @{
+
+                    RenderTree(checkPoint.Children.ToList(), date.Value);
+                }
+
             </div>
-
-            @{
-
-                RenderTree(checkPoint.Children.ToList(), date.Value);
-            }
-
-        </div>
+        }
+        else
+        {
+            <div>No hay datos en el rango seleccionado.</div>
+        }
     }
-    else
-    {
-        <div>No hay datos en el rango seleccionado.</div>
-    }
-}
+</div>
 
 @functions {
 
@@ -62,7 +64,7 @@
                     <div class="d-flex justify-content-sm-center w-100"><i class="bi bi-arrow-right d-none d-md-block w-100"></i><i class="bi bi-arrow-up d-md-none w-100"></i></div>
                 </div>
                 <div class="card p-2 text-center">
-                    <div class="text-center mb-2" style="background-color: #f4f4f4;">
+                    <div class="text-center mb-2 checkpoint-name" style="background-color: #f4f4f4;">
                         @*<i class="bi bi-arrow-left-right d-inline-block"></i>&nbsp;@item.Description*@
                         @*<i class="bi bi-fullscreen d-inline-block"></i>&nbsp;@item.Description
                             <i class="bi bi-upc-scan d-inline-block"></i>*@

@@ -39,10 +39,10 @@ namespace SySIntegral.DataGenerator
             {
                 var lines = new List<string>();
 
-                var startDate = new DateTime(2022, 10, 01);
+                var startDate = new DateTime(2022, 11, 01);
                 //var line = $"DeviceId,Timestamp,WhiteEggsCount,ColorEggsCount,ReadTimestamp,ExportTimestamp";
                 //Debug.WriteLine(line);
-                for (var d = 0; d < 60; d++)
+                for (var d = 0; d < 8; d++)
                 {
                     var whiteCounter = 0;
                     var colorCounter = 0;
@@ -74,7 +74,7 @@ namespace SySIntegral.DataGenerator
                     startDate = startDate.AddDays(1);
                 }
 
-                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegraloctdev2.txt", lines);
+                await System.IO.File.WriteAllLinesAsync("d:\\TMP\\sysintegraloctdev3.txt", lines);
 
             }
             catch (Exception e)

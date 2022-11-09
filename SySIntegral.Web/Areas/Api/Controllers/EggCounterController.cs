@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,8 @@ using SySIntegral.Core.Repositories;
 using SySIntegral.Core.Repositories.CheckPoints;
 using SySIntegral.Core.Repositories.Devices;
 using SySIntegral.Core.Repositories.EggsRegistry;
+using SySIntegral.Core.Services.Reports;
+using SySIntegral.Core.Services.Reports.Dto;
 using SySIntegral.Web.Common.Filters;
 
 namespace SySIntegral.Web.Areas.Api.Controllers
@@ -25,16 +28,19 @@ namespace SySIntegral.Web.Areas.Api.Controllers
         private readonly IRepository<EggRegistry> _eggRegistryRepository;
         private readonly IInputDeviceRepository _inputDeviceRepository;
         private readonly ICheckPointRepository _checkPointRepository;
+        private readonly IReportsService _reportsService;
 
-        public EggCounterController(ILogger<EggCounterController> logger, 
-            IRepository<EggRegistry> eggRegistryRepository, 
+        public EggCounterController(ILogger<EggCounterController> logger,
+            IRepository<EggRegistry> eggRegistryRepository,
             IInputDeviceRepository inputDeviceRepository,
-            ICheckPointRepository checkPointRepository)
+            ICheckPointRepository checkPointRepository,
+            IReportsService reportsService)
         {
             _logger = logger;
             _eggRegistryRepository = eggRegistryRepository;
             _inputDeviceRepository = inputDeviceRepository;
             _checkPointRepository = checkPointRepository;
+            _reportsService = reportsService;
         }
 
         [HttpGet]
@@ -85,8 +91,17 @@ namespace SySIntegral.Web.Areas.Api.Controllers
                 });
                 _checkPointRepository.Update(checkPoint);
             }
-            
+
             return Ok(data);
+        }
+
+        [HttpGet]
+        [Route("conteos/totales")]
+        public IActionResult TotalCounts([FromQuery] string token)
+        {
+            var aa = _reportsService.GetLatestDailyCounts(2, true).GroupByLine().ToList();
+            var model = new CheckPointDailyCounts { CheckPoints = _reportsService.GetLatestDailyCounts(2, true).CheckPoints };
+            return Ok(aa);
         }
 
         private DateTime? ParseDate(string date)

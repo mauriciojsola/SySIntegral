@@ -13,6 +13,7 @@ namespace SySIntegral.Core.Entities.Organizations
         }
 
         public string Name { get; set; }
+        //public string ApiKey { get; set; }
         public virtual ICollection<Asset> Assets { get; set; }
     }
 }

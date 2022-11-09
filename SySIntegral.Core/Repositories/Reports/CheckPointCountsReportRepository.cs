@@ -111,8 +111,17 @@ namespace SySIntegral.Core.Repositories.Reports
             }
         }
 
-        public IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId)
+        public IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId, bool onlyTodayData = false)
         {
+            var dateQuery = onlyTodayData
+                ? $"'{(DateTime.Today.ToString("yyyy-MM-dd"))}'"
+                : @$"(SELECT MAX(r2.ReadTimestamp) FROM EggRegistry AS r2
+            INNER JOIN InputDevice AS d2 ON d2.Id = r2.InputDeviceId
+            INNER JOIN [CheckPoint] AS cp2 ON cp2.InputDeviceId = d2.Id
+            INNER JOIN Asset AS a2 ON a2.Id = d2.AssetId
+            INNER JOIN Organization AS org2 ON org2.Id = a2.OrganizationId 
+            WHERE org2.Id = {organizationId})";
+
             var query = $@"	
 
                     SELECT CAST(r.ReadTimestamp AS DATE) AS RegistryDate, MAX(r.WhiteEggsCount) AS WhiteEggsCount, MAX(r.ColorEggsCount) AS ColorEggsCount,
@@ -128,12 +137,7 @@ namespace SySIntegral.Core.Repositories.Reports
 
                         AND org.Id = {organizationId}  
 
-                        AND r.ReadTimestamp = (SELECT MAX(r2.ReadTimestamp) FROM EggRegistry AS r2
-                            INNER JOIN InputDevice AS d2 ON d2.Id = r2.InputDeviceId
-                            INNER JOIN [CheckPoint] AS cp2 ON cp2.InputDeviceId = d2.Id
-                            INNER JOIN Asset AS a2 ON a2.Id = d2.AssetId
-                            INNER JOIN Organization AS org2 ON org2.Id = a2.OrganizationId 
-                                               WHERE org2.Id = {organizationId})
+                        AND r.ReadTimestamp = {dateQuery}
                             
                         GROUP BY CAST(r.ReadTimestamp as DATE), d.UniqueId, cp.Id, cp.ParentId, a.Id
                         
@@ -157,12 +161,7 @@ namespace SySIntegral.Core.Repositories.Reports
         public int CheckPointId { get; set; }
         public int? CheckPointParentId { get; set; }
         public int AssetId { get; set; }
-
-        public int GetTotalEggsCount()
-        {
-            return WhiteEggsCount + ColorEggsCount;
-        }
-
+        public int TotalEggsCount => WhiteEggsCount + ColorEggsCount;
     }
 
     public class CheckPointsHierarchyDto
@@ -187,6 +186,6 @@ namespace SySIntegral.Core.Repositories.Reports
     {
         IEnumerable<CheckPointsHierarchyDto> GetCheckPointsHierarchy(int organizationId);
         IEnumerable<DailyCountingDto> GetDailyCounts(DateTime startDate, DateTime endDate, int organizationId);
-        IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId);
+        IEnumerable<DailyCountingDto> GetLatestDailyCounts(int organizationId, bool onlyTodayData = false);
     }
 }

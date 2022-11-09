@@ -48,11 +48,11 @@ namespace SySIntegral.Core.Services.Reports.Dto
             var firstChild = Children.FirstOrDefault();
             var dailyCount = Counts.FirstOrDefault(x => x.RegistryDate.AbsoluteStart() == date.AbsoluteStart());
 
-            if (firstChild == null) return dailyCount?.GetTotalEggsCount() ?? 0;
+            if (firstChild == null) return dailyCount?.TotalEggsCount ?? 0;
 
             return CheckPointType == CheckPointType.Aggregator
                 ? firstChild.GetAggregatedCount(date)
-                : dailyCount?.GetTotalEggsCount() ?? 0;
+                : dailyCount?.TotalEggsCount ?? 0;
         }
 
         public IEnumerable<CheckPointDto> Flatten()
