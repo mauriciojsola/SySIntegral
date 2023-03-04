@@ -15,6 +15,9 @@ using SySIntegral.Web.Common.ViewComponents;
 
 namespace SySIntegral.Web.Areas.Admin.Views.Reports.Components
 {
+    /// <summary>
+    /// View for this component is in ..\SySIntegral.Web\Views\Shared\Components\DayTotal\Default.cshtml
+    /// </summary>
     public class DayTotalViewComponent : BaseViewComponent
     {
         private readonly ILogger<RegistriesController> _logger;

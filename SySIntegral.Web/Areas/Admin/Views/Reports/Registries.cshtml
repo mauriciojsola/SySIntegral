@@ -95,7 +95,7 @@
     $(document).ready(function () {
 
         $('#RefreshPage').click(function () {
-            console.debug("refreshing...");
+            console.debug("Refreshing...");
             updateReport();
             //window.location.reload();
         });
@@ -183,6 +183,10 @@
 
         initDatePicker(start, end);
 
+        setInterval(function () {
+            console.debug("Auto-refreshing... ", new Date().toLocaleString());
+            updateReport()
+        }, 30000);
 
     });
 
@@ -254,9 +258,6 @@
             .always(function () {
                 $.unblockUI();
             });
-
-
-
 
     }
 

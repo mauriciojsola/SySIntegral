@@ -137,7 +137,7 @@ namespace SySIntegral.Core.Repositories.Reports
 
                         AND org.Id = {organizationId}  
 
-                        AND r.ReadTimestamp = {dateQuery}
+                        AND CAST(r.ReadTimestamp as DATE) = CAST(({dateQuery}) as DATE)
                             
                         GROUP BY CAST(r.ReadTimestamp as DATE), d.UniqueId, cp.Id, cp.ParentId, a.Id
                         
